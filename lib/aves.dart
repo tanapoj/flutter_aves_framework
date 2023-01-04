@@ -1,0 +1,3 @@
+library aves;
+
+class Aves {}

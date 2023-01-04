@@ -1,0 +1,6 @@
+/// Project: {{#projectName}}
+/// Author: {{#author}}
+/// Created at: {{#createdAt}}
+
+class ExampleWidget {
+}

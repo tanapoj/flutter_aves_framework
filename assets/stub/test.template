@@ -1,0 +1,3 @@
+class {{#className}}{
+    int x = 0;
+}

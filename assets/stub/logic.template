@@ -1,0 +1,28 @@
+/// Project: {{#projectName}}
+/// Author: {{#author}}
+/// Created at: {{#createdAt}}
+
+import 'package:flutter/material.dart';
+import 'package:flutter_live_data/index.dart';
+import 'package:{{#projectName}}/app/index.dart';
+import '{{#class_name}}.view.dart';
+
+class {{#className}}Logic extends ComponentLogic {
+  @override
+  String get name => '{{#class_name}}';
+
+  final LifeCycleOwner? parent;
+
+  {{#className}}Logic({
+    Key? key,
+    required Widget Function(ComponentLogic) builder,
+    this.parent,
+  }) : super(key: key, builder: builder);
+
+  factory {{#className}}Logic.build({LifeCycleOwner? parent}) {
+    return {{#className}}Logic(
+      parent: parent,
+      builder: (logic) => {{#className}}View(logic as {{#className}}Logic),
+    );
+  }
+}

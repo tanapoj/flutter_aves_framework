@@ -1,0 +1,21 @@
+/// Project: {{#projectName}}
+/// Author: {{#author}}
+/// Created at: {{#createdAt}}
+
+import 'package:flutter/material.dart';
+import 'package:{{#projectName}}/app/index.dart' as app;
+import '{{#class_name}}.logic.dart';
+
+class {{#className}}View extends app.View<{{#className}}Logic> {
+  {{#className}}View(
+    {{#className}}Logic logic, {
+    Key? key,
+  }) : super(logic, key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(
+      child: Text('placeholder for {{#className}}'),
+    );
+  }
+}

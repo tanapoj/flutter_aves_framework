@@ -1,0 +1,51 @@
+targets:
+  $default:
+    builders:
+      slang_build_runner:
+        options:
+          base_locale: en
+          fallback_strategy: base_locale
+          input_directory: assets/lang
+          input_file_pattern: .lang.json
+          output_directory: lib/config/lang
+          # output_file_pattern: .g.dart # deprecated, use output_file_name
+          output_file_name: translations.g.dart
+          output_format: multiple_files #single_file
+          locale_handling: true
+          namespaces: false
+          translate_var: slang_global_tt
+          enum_name: AppLocale
+          translation_class_visibility: public
+          key_case: snake
+          key_map_case: camel
+          param_case: pascal
+          string_interpolation: double_braces
+          flat_map: false
+          timestamp: true
+          maps:
+            - error.codes
+            - category
+            - iconNames
+          pluralization:
+            auto: cardinal
+            cardinal:
+              - someKey.apple
+            ordinal:
+              - someKey.place
+          contexts:
+            gender_context:
+              enum:
+                - male
+                - female
+              auto: false
+              paths:
+                - my.path.to.greet
+          interfaces:
+            PageData: onboarding.pages.*
+            PageData2:
+              paths:
+                - my.path
+                - cool.pages.*
+              attributes:
+                - String title
+                - String? content

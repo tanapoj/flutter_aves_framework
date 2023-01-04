@@ -1,0 +1,61 @@
+/// Project: {{#projectName}}
+/// Author: {{#author}}
+/// Created at: {{#createdAt}}
+
+import 'package:flutter/material.dart';
+import 'package:bloc_builder/index.dart';
+import 'package:{{#projectName}}/config/env/dev_mock.dart';
+import 'package:{{#projectName}}/ui/main/startup.dart';
+import 'package:{{#projectName}}/app/index.dart';
+import 'package:{{#projectName}}/common/log.dart';
+import 'package:{{#projectName}}/config/lang/translations.g.dart';
+
+void main() {
+  Environment env = DevMockEnvironment();
+
+  WidgetsFlutterBinding.ensureInitialized();
+  LocaleSettings.useDeviceLocale();
+
+  sysLog.i('run app, using environment: $env');
+
+  runApp(MainApplication(
+    env: env,
+  ));
+}
+
+class MainApplication extends StatelessWidget {
+  final Environment env;
+
+  const MainApplication({
+    Key? key,
+    required this.env,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext _context) {
+    sysLog.i('build MainApplication');
+    return App(
+      env: env,
+      child: Builder(
+        builder: (BuildContext context) {
+          sysLog.i('build AppProvider');
+          var app = App.of(context);
+          app.syncInit();
+          return $watch(
+            app.$state,
+            build: (context, _) {
+
+              /// Custom Code here...
+              sysLog.i('build-render MaterialApp');
+              return MaterialApp(
+                title: app.env.appName,
+                theme: app.ui.theme.themeData,
+                home: StartupPage.build(),
+              );
+            },
+          );
+        },
+      ),
+    );
+  }
+}
