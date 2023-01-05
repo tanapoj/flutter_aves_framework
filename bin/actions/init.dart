@@ -5,6 +5,7 @@ import 'package:aves_support/common/extension/string.dart';
 import 'package:recase/recase.dart';
 
 import '../command.dart';
+import '../io/file.dart';
 import '../io/printer.dart';
 import '../io/template.dart';
 import 'action.dart';
@@ -199,27 +200,24 @@ class InitAction extends Action {
   ) async {
     var content = await makeTemplate(template, vars);
 
-    if (content != null) {
-      try {
-        var path = dir.isEmpty ? outputFile : '$dir/$outputFile';
-        if (!overwrite && await File(path).exists()) {
-          throw ConflictingOutputsException(
-            'File "$path" already exist. if you want to override file, use flag --overwrite',
-          );
-        }
-        var d = Directory(dir);
-        if (dir.isNotEmpty && !await d.exists()) {
-          await d.create(recursive: true);
-        }
-        await writeFile(path, content);
-        return path;
-      } catch (e) {
-        if (e is ConflictingOutputsException) rethrow;
-        printer.writeln(printer.red(e.toString()));
-        return null;
+    try {
+      var path = dir.isEmpty ? outputFile : '$dir/$outputFile';
+      if (!overwrite && await File(path).exists()) {
+        throw ConflictingOutputsException(
+          'File "$path" already exist. if you want to override file, use flag --overwrite',
+        );
       }
+      var d = Directory(dir);
+      if (dir.isNotEmpty && !await d.exists()) {
+        await d.create(recursive: true);
+      }
+      await writeFile(path, content);
+      return path;
+    } catch (e) {
+      if (e is ConflictingOutputsException) rethrow;
+      printer.writeln(printer.red(e.toString()));
+      return null;
     }
-    return null;
   }
 }
 

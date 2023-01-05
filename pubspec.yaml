@@ -1,7 +1,7 @@
 name: aves
 description: Aves Framework
-version: 0.0.10
-homepage: https://www.github.com/nartra/flutter_aves
+version: 0.0.11
+homepage: https://github.com/tanapoj/aves
 
 environment:
   sdk: '>=2.18.0 <3.0.0'

@@ -5,6 +5,7 @@ import 'package:aves_support/common/extension/string.dart';
 import 'package:recase/recase.dart';
 
 import '../command.dart';
+import '../io/file.dart';
 import '../io/printer.dart';
 import '../io/template.dart';
 import 'action.dart';
@@ -62,15 +63,12 @@ class MakeViewAction extends Action {
       'class_name': nameSnakeCase,
     });
 
-    if (content != null) {
-      try {
-        await writeFile(outputFile, content);
-        return 0;
-      } catch (e) {
-        printer.writeln(printer.red(e.toString()));
-        return 1;
-      }
+    try {
+      await writeFile(outputFile, content);
+      return 0;
+    } catch (e) {
+      printer.writeln(printer.red(e.toString()));
+      return 1;
     }
-    return 1;
   }
 }
