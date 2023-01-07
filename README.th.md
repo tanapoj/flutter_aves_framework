@@ -1,4 +1,14 @@
-Aves Framework
+# Aves Framework
+
+Feature
+- BLoC and MVVM Pattern
+- Networking
+- UI and Theming
+- Localization (ระบบหลายภาษา)
+- Environment
+- Page-based State Management
+
+## Content
 
 - [CLI](#cli)
 - [Init Project](#init-project)
