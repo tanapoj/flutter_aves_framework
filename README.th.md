@@ -24,27 +24,32 @@ Aves เป็นเฟรมเวิร์คสำหรับสร้าง
 การติดตั้ง [https://pub.dev/packages/aves/install](https://pub.dev/packages/aves/install)
 
 เพิ่ม package ในโปรเจค
+
 ```
 dependencies:
   aves: {{version}}
 ```
+
 จากนั้นให้รันคำสั่ง `aves init` เพื่อสร้างไฟล์สำคัญสำหรับโปรเจค (ดูหัวข้อ [CLI](#cli))
 
 ## CLI
 
 คำสั่งเพื่อแสดง cli ทั้งหมด
+
 ```
 fvm flutter pub run aves
 ```
 
 ### Init Project
 
-ใช้คำสั่ง `init` เพื่อสร้างไฟล์ project 
+ใช้คำสั่ง `init` เพื่อสร้างไฟล์ project
+
 ```
 fvm flutter pub run aves init
 ```
 
 คำสั่งเพื่อรัน build_runner (ไฟล์ที่ต้องใช้การ generate)
+
 ```
 fvm flutter pub run aves build
 fvm flutter pub run aves build:model
@@ -52,6 +57,7 @@ fvm flutter pub run aves build:injectable
 ```
 
 การสร้างไฟล์
+
 ```
 fvm flutter pub run aves make:page
 fvm flutter pub run aves make:logic
@@ -60,6 +66,7 @@ fvm flutter pub run aves make:model
 ```
 
 ## Project Structure
+
 ```
 |-- lib
 |   |-- app
@@ -85,18 +92,18 @@ fvm flutter pub run aves make:model
     '-- aves_config.json
 ```
 
-- *app*: ไฟล์พื้นฐานของโปรเจค สามารถแก้ไขได้ (custom) สำหรับโปรเจคตัวเอง
-- *common*: ฟังก์ชันและคำสั่งทั่วไป เช่น helper function
-- *config*: การตั้งค่าสำหรับโปรเจค เช่นการกำหนดหน้าแรก หรือตั้งค่า environment
-- *data*: เลเยอร์สำหรับจัดการ Data 
-  - *network*: endpoint สำหรับเรียกข้อมูลจาก API
-  - *db*: Local Database
-  - *preference*: Shared Preference
-- *model*: โมเดลสำหรับเก็บข้อมูล
-- *ui*:
-  - *main*:
-  - *pages*:
-  - *widgets*:
+- **app**: ไฟล์พื้นฐานของโปรเจค สามารถแก้ไขได้ (custom) สำหรับโปรเจคตัวเอง
+- **common**: ฟังก์ชันและคำสั่งทั่วไป เช่น helper function
+- **config**: การตั้งค่าสำหรับโปรเจค เช่นการกำหนดหน้าแรก หรือตั้งค่า environment
+- **data**: เลเยอร์สำหรับจัดการ Data
+    - **network**: endpoint สำหรับเรียกข้อมูลจาก API
+    - **db**: Local Database
+    - **preference**: Shared Preference
+- **model**: โมเดลสำหรับเก็บข้อมูล
+- **ui**:
+    - **main**:
+    - **pages**:
+    - **widgets**:
 
 ```
 +-- Page --+
@@ -110,7 +117,8 @@ fvm flutter pub run aves make:model
 
 ## Dependency Injection
 
-สำหรับ Aves ใช้ lib `injectable` ในการสร้างไฟล์สำหรับการทำ Dependency Injection ซึ่งสามารถสั่งสร้าง generated file ได้จาก cli:build
+สำหรับ Aves ใช้ lib `injectable` ในการสร้างไฟล์สำหรับการทำ Dependency Injection ซึ่งสามารถสั่งสร้าง
+generated file ได้จาก cli:build
 
 ## Page
 
@@ -118,80 +126,81 @@ Aves ใช้การสร้าง Widget ด้วย `mvvm_bloc` ซึ่
 
 ```dart
 class MyPageLogic extends ComponentLogic {
-    @override
-    String get name => 'my_page';
+  @override
+  String get name => 'my_page';
 
-    MyPageLogic({
-        Key? key,
-        required Widget Function(ComponentLogic) builder,
-    }) : super(key: key, builder: builder);
+  MyPageLogic({
+    Key? key,
+    required Widget Function(ComponentLogic) builder,
+  }) : super(key: key, builder: builder);
 
-    factory MyPageLogic.build(String label) {
-        return MyPageLogic(
-                builder: (bloc) => MyPageView(
-                logic: bloc as MyPageLogic,
-                label: label,
-            ),
-        );
-    }
+  factory MyPageLogic.build(String label) {
+    return MyPageLogic(
+      builder: (bloc) =>
+          MyPageView(
+            logic: bloc as MyPageLogic,
+            label: label,
+          ),
+    );
+  }
 
-    /// LiveData
+  /// LiveData
 
-    late final LiveData<int> $counter = LiveData(0).owner(this);
+  late final LiveData<int> $counter = LiveData(0).owner(this);
 
-    /// LiveCycle Listener
+  /// LiveCycle Listener
 
-    @override
-    onCreate() {
-        super.onCreate();
-        // TODO เมื่อหน้าเพจถูกสร้าง (constructor)
-    }
+  @override
+  onCreate() {
+    super.onCreate();
+    // TODO เมื่อหน้าเพจถูกสร้าง (constructor)
+  }
 
-    @override
-    onInit() {
-        super.onInit();
-        // TODO เมื่อหน้าเพจเริ่มทำงานครั้งแรก
-    }
+  @override
+  onInit() {
+    super.onInit();
+    // TODO เมื่อหน้าเพจเริ่มทำงานครั้งแรก
+  }
 
-    @override
-    onResume() {
-        super.onResume();
-        // TODO เมื่อหน้าเพจโดนเรียกหลังจาก pause ไป
-    }
+  @override
+  onResume() {
+    super.onResume();
+    // TODO เมื่อหน้าเพจโดนเรียกหลังจาก pause ไป
+  }
 
-    @override
-    onPause() {
-        // TODO เมื่อหน้าเพจโดยซ่อนหรือย่อหน้าแอพลงไป
-        super.onPause();
-    }
+  @override
+  onPause() {
+    // TODO เมื่อหน้าเพจโดยซ่อนหรือย่อหน้าแอพลงไป
+    super.onPause();
+  }
 
-    @override
-    onDispose() {
-        // TODO เมื่อหน้าเพจโดนทำลาย
-        super.onDispose();
-    }
+  @override
+  onDispose() {
+    // TODO เมื่อหน้าเพจโดนทำลาย
+    super.onDispose();
+  }
 
-    /// Method
+  /// Method
 
-    increment() {
-        $counter.value++;
-    }
+  increment() {
+    $counter.value++;
+  }
 }
 ```
 
-
 ```dart
-class MyPageView extends app.View<MyPageLogic> {
-  MyPageView(
-      MyPageLogic logic, {
+class MyPageView extends View<MyPageLogic> {
+  MyPageView(MyPageLogic logic, {
     Key? key,
   }) : super(logic, key: key);
 
   @override
   Widget build(BuildContext context) {
-    return $watch(logic.$counter, (_, int counter){
-      return Text('count is $count');
-    });
+    return SomeWidget(
+      child: $watch(logic.$counter, (_, int counter) {
+        return Text('count is $count');
+      }),
+    );
   }
 }
 
@@ -199,8 +208,110 @@ class MyPageView extends app.View<MyPageLogic> {
 
 ## Routing
 
+```dart
+class MyPageLogic extends ComponentLogic {
+  _navigateNextPage() {
+    nav.push(context!, NextPage.build());
+  }
+}
+```
+
+```dart
+class MyPageView extends View<MyPageLogic> {
+  _navigateNextPage() {
+    logic.nav.push(context!, NextPage.build());
+  }
+}
+```
+
 ## Networking
+
+```dart
+@injectable
+class MyNetworkApi {
+
+  Request<T> request<T>() {
+    return Request<T>.http()
+      ..method = 'GET'
+      ..baseUrl = 'https://api.myapi.co/'
+      ..url = ''
+      ..requestInterceptor = useAuthorizationBearerToken() + useMockData(fileName: 'test')
+      ..responseInterceptor = useUnpackJSend() + useReAuth()
+      ..body = RequestBodyJson({});
+  }
+
+  Request<List<MyModel>> getTestItems() {
+    return request<List<MyModel>>()
+      ..method = 'GET'
+      ..url = 'items'
+      ..mappingResponse = (dynamic body) {
+        return <MyModel>[
+          ...(jsonDecodeToIterable(body)).map((item) => MyModel.fromJson(jsonDecodeToMap(item))),
+        ];
+      };
+  }
+}
+```
+
+```dart
+@injectable
+class MyService {
+
+  final MyNetworkApi api;
+
+  MyService(this.api);
+
+  Future<Result<List<MyModel>, Failure>> getTestItems() async {
+    network.Response<List<MyModel>> response = await api.getTestItems().fetch();
+    return response.toResult();
+  }
+}
+```
 
 ## Localization
 
+```dart
+class MyPageLogic extends ComponentLogic {
+  
+  _changeLanguage() {
+    if (translator.isUsingEnglish) {
+      translator.useThai();
+    }
+
+    if (translator.isUsingThai) {
+      translator.useEnglish();
+    }
+  }
+  
+}
+```
+
+```json
+{
+  "my_page": {
+    "title": "This is my page"
+  }
+}
+```
+
+```dart
+Text(tt.my_page.title);
+```
+
 ## UI and Theming
+
+```dart
+class MyPageLogic extends ComponentLogic {
+  
+  _changeTheme() {
+    if (ui.isUsingTheme1) {
+      ui.useTheme2();
+    }
+
+    if (ui.isUsingTheme2) {
+      ui.useTheme1();
+    }
+  }
+  
+}
+```

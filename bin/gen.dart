@@ -9,7 +9,10 @@ void main(List<String> arguments) async {
   final List<File> files = [];
   await traversal(dir, files);
   var m = await getFilesContent(files, rootPath);
-  String output = 'Map<String,String> template = {\n';
+  String output = '';
+  output += '/// Generated File, Do not modify this file.\n';
+  output += '/// to generate, run: fvm flutter pub run aves:gen\n\n';
+  output += 'Map<String,String> template = {\n';
   for (var entry in m.entries) {
     var name = entry.key;
     var content = entry.value.replaceAll('\$', '\\\$');
@@ -17,7 +20,7 @@ void main(List<String> arguments) async {
     output += '"$name": """$content""",\n';
   }
   output += "};";
-  writeFile('bin/assets/stub/template.g.dart', output, overwrite: true);
+  await writeFile('bin/assets/stub/template.g.dart', output, overwrite: true);
 }
 
 Future<void> traversal(Directory root, List<File> recorder) async {

@@ -8,7 +8,24 @@ class Command {
   final List<String> options;
   final Map<String, String?> arguments;
 
-  Command({required this.cmd, required this.options, required this.arguments});
+  Command({
+    required this.cmd,
+    required this.options,
+    required this.arguments,
+  });
+
+  factory Command.copyWith(
+    Command from, {
+    String? cmd,
+    List<String> options = const [],
+    Map<String, String?> arguments = const {},
+  }) {
+    return Command(
+      cmd: cmd ?? from.cmd,
+      options: [...from.options, ...options],
+      arguments: {...from.arguments, ...arguments},
+    );
+  }
 
   factory Command.parse(List<String> inputs) {
     String cmd = inputs[0].toLowerCase();

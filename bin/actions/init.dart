@@ -5,6 +5,7 @@ import '../io/file.dart';
 import '../io/printer.dart';
 import '../io/template.dart';
 import 'action.dart';
+import 'make_model.dart';
 import 'make_page.dart';
 
 class InitAction extends Action {
@@ -162,7 +163,39 @@ class InitAction extends Action {
         dry: dry,
       )}');
 
-      // common
+      // db
+      printer.writeln('$prefix ${await _createFile(
+        outputDir: '$outputDirectory/data/db',
+        outputFile: 'database.dart',
+        template: 'init/data/db/database',
+        vars: {
+          '': '',
+        },
+        overwrite: overwrite,
+        dry: dry,
+      )}');
+      printer.writeln('$prefix ${await _createFile(
+        outputDir: '$outputDirectory/data/network',
+        outputFile: 'app_api.dart',
+        template: 'init/data/network/app_api',
+        vars: {
+          '': '',
+        },
+        overwrite: overwrite,
+        dry: dry,
+      )}');
+      printer.writeln('$prefix ${await _createFile(
+        outputDir: '$outputDirectory/data/preference',
+        outputFile: 'app_pref.dart',
+        template: 'init/data/preference/app_pref',
+        vars: {
+          '': '',
+        },
+        overwrite: overwrite,
+        dry: dry,
+      )}');
+
+      // model
       printer.writeln('$prefix ${await _createFile(
         outputDir: '$outputDirectory/model',
         outputFile: 'user.dart',
@@ -198,13 +231,23 @@ class InitAction extends Action {
       )}');
 
       // HomePage
-      var status = await MakePageAction().exec(Command(
+      var status;
+      status = await MakePageAction().exec(Command.copyWith(
+        input,
         cmd: 'make:page',
         options: ['home'],
         arguments: {
           '--dir': '$outputDirectory/ui/pages',
-          if (overwrite) '--overwrite': null,
-          if (dry) '--dry': null,
+        },
+      ));
+      if (status != 0) return status;
+
+      status = await MakeModelAction().exec(Command.copyWith(
+        input,
+        cmd: 'make:model',
+        options: ['api/item'],
+        arguments: {
+          '--dir': '$outputDirectory/model',
         },
       ));
       if (status != 0) return status;

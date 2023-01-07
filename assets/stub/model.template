@@ -15,16 +15,18 @@ part '{{#class_name}}.g.dart';
 @immutable
 class {{#className}} {
 
-  //TODO: (1) add Model's Fields
+  // TODO: (1) add Model's Fields
 
   @JsonKey(name: 'example_field')
   final int? exampleField;
+
+  // Do not modify this section
 
   factory {{#className}}.fromJson(Map<String, dynamic> json) => _${{#className}}FromJson(json);
 
   Map<String, dynamic> toJson() => _${{#className}}ToJson(this);
 
-  //TODO: (2) generate Constructor, == and toString
+  // TODO: (2) generate Constructor, == and toString
 
-  //TODO: (3) then run `flutter pub run aves build:model` or `fvm flutter pub run aves build:model`
+  // TODO: (3) then run `flutter pub run aves build:model` or `fvm flutter pub run aves build:model`
 }

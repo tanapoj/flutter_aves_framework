@@ -1,13 +1,38 @@
+/// Generated File, Do not modify this file.
+/// to generate, run: fvm flutter pub run aves:gen
+
 Map<String,String> template = {
 "model.template": """/// Project: {{#projectName}}
 /// Author: {{#author}}
 /// Created at: {{#createdAt}}
 
-import 'package:flutter/material.dart';
-import 'package:flutter_live_data/index.dart';
+import 'package:json_annotation/json_annotation.dart';
+import 'package:meta/meta.dart';
 
+part '{{#class_name}}.g.dart';
+
+//=========================================
+// {{#className}}
+//=========================================
+
+@JsonSerializable(explicitToJson: true)
+@immutable
 class {{#className}} {
-    int id;
+
+  // TODO: (1) add Model's Fields
+
+  @JsonKey(name: 'example_field')
+  final int? exampleField;
+
+  // Do not modify this section
+
+  factory {{#className}}.fromJson(Map<String, dynamic> json) => _\${{#className}}FromJson(json);
+
+  Map<String, dynamic> toJson() => _\${{#className}}ToJson(this);
+
+  // TODO: (2) generate Constructor, == and toString
+
+  // TODO: (3) then run `flutter pub run aves build:model` or `fvm flutter pub run aves build:model`
 }
 """,
 "view.template": """/// Project: {{#projectName}}
@@ -240,6 +265,21 @@ class ExampleWidget {
 
 """,
 "init/model/user.template": """/// Project: {{#projectName}}
+/// Author: {{#author}}
+/// Created at: {{#createdAt}}
+
+""",
+"init/data/network/app_api.template": """/// Project: {{#projectName}}
+/// Author: {{#author}}
+/// Created at: {{#createdAt}}
+
+""",
+"init/data/preference/app_pref.template": """/// Project: {{#projectName}}
+/// Author: {{#author}}
+/// Created at: {{#createdAt}}
+
+""",
+"init/data/db/database.template": """/// Project: {{#projectName}}
 /// Author: {{#author}}
 /// Created at: {{#createdAt}}
 
