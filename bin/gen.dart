@@ -17,7 +17,7 @@ void main(List<String> arguments) async {
     output += '"$name": """$content""",\n';
   }
   output += "};";
-  writeFile('bin/assets/stub/template.g.dart', output);
+  writeFile('bin/assets/stub/template.g.dart', output, overwrite: true);
 }
 
 Future<void> traversal(Directory root, List<File> recorder) async {

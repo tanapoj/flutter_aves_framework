@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:aves/common/syslog.dart';
-import 'package:aves/component/periodic_lifecycle_event.dart';
-import 'package:aves/component/subscribe_lifecycle_event.dart';
+import 'package:aves/architecture/component/periodic_lifecycle_event.dart';
+import 'package:aves/architecture/component/subscribe_lifecycle_event.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_live_data/index.dart' as fld;
 import 'legacy/index.dart' as legacy;
@@ -21,9 +21,9 @@ abstract class Logic<T> extends legacy.ComponentLogic {
     bool showSysLog = true,
   })  : _logging = showSysLog,
         super(
-        key: key,
-        builder: (legacy.ComponentLogic component) => builder(component as T),
-      ) {
+          key: key,
+          builder: (legacy.ComponentLogic component) => builder(component as T),
+        ) {
     _selfLog('construct');
     _subscribeLifeCycleEvent.onCtor();
     _periodicLifeCycleEvent.onCtor();
@@ -38,9 +38,9 @@ abstract class Logic<T> extends legacy.ComponentLogic {
   }
 
   subscribe<T>(
-      fld.LiveData<T>? liveData,
-      void Function(T value) onData,
-      ) {
+    fld.LiveData<T>? liveData,
+    void Function(T value) onData,
+  ) {
     if (liveData == null) return;
     if (attr.isInitializingState) {
       sysLog.w('call [subscribe] inside method onInit (initState) cause abnormal behavior when Hot-Reload'
@@ -51,9 +51,9 @@ abstract class Logic<T> extends legacy.ComponentLogic {
   }
 
   PeriodicTimerSnap periodic(
-      Duration duration,
-      void Function(Timer timer) callback,
-      ) {
+    Duration duration,
+    void Function(Timer timer) callback,
+  ) {
     if (attr.isInitializingState) {
       sysLog.w('call [periodic] inside method onInit (initState) cause abnormal behavior when Hot-Reload'
           ' --> '

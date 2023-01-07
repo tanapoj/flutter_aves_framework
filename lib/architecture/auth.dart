@@ -1,6 +1,6 @@
 import 'package:flutter_live_data/index.dart';
 
-class AvesAuth<AppUser> {
+class AvesAuth<User> {
   syncInit() {}
 
   asyncInit() async {
@@ -9,14 +9,14 @@ class AvesAuth<AppUser> {
 
   bool get isLogin => user != null; // || user is GuestUser;
 
-  AppUser? get user => $state.value;
+  User? get user => $state.value;
 
-  LiveDataSource<AppUser?> $state = LiveDataSource(
+  LiveDataSource<User?> $state = LiveDataSource(
     null, // GuestUser(),
     dataSourceInterface: null,
   );
 
-  setUser(AppUser user) {
+  setUser(User user) {
     $state.value = user;
   }
 

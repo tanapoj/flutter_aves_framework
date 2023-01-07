@@ -4,7 +4,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_live_data/index.dart';
-import 'package:aves/component/logic.dart';
+import 'package:aves/architecture/component/logic.dart';
 import 'developer.view.dart';
 
 class DeveloperLogic extends Logic {

@@ -17,7 +17,6 @@ class MakePageAction extends Action {
 
   @override
   bool checkCanExecCmd(Command input) {
-    if (input.cmd == 'make') return true;
     if (input.cmd == 'make:page') return true;
     return false;
   }
@@ -25,14 +24,16 @@ class MakePageAction extends Action {
   @override
   bool verifyOptionsAndArguments(Command input) {
     String? pageName = input.options.elementAtOrNull(0);
-    var re = RegExp(r'^[a-zA-Z0-9_]{1,256}$');
     if (pageName == null) {
       printer.writeln(printer.red('-h'));
       return false;
     }
-    if (!re.hasMatch(pageName)) {
-      printer.writeln(printer.red('"$pageName" is not variable name format!'));
-      return false;
+    for (var n in pageName.split('/') ?? []) {
+      var re = RegExp(r'^[a-zA-Z_]{1}[a-zA-Z0-9_]{1,256}$');
+      if (!re.hasMatch(ReCase(n).snakeCase)) {
+        printer.writeln(printer.red('"$n" in "$pageName" is not variable name format!'));
+        return false;
+      }
     }
 
     return true;
@@ -41,20 +42,29 @@ class MakePageAction extends Action {
   @override
   exec(Command input) async {
     var outputDirectory = input.arguments['--dir'] ?? 'lib/ui/pages';
+    var dry = input.arguments.containsKey('--dry');
+
     if (!outputDirectory.endsWith('/')) {
       outputDirectory += '/';
     }
 
-    String name = input.options.elementAt(0);
+    String name = input.options[0];
 
-    ReCase rc = ReCase(name);
-    var nameSnakeCase = rc.snakeCase;
+    List<String> names = name.split('/').map((n) {
+      return ReCase(n).snakeCase;
+    }).toList();
+
+    // ReCase rc = ReCase(name);
+    // var nameSnakeCase = rc.snakeCase;
+    var nameSnakeCase = names.join('/');
 
     if (!await Directory('$outputDirectory$nameSnakeCase').exists()) {
-      await Directory('$outputDirectory$nameSnakeCase').create(recursive: true);
+      if (!dry) {
+        await Directory('$outputDirectory$nameSnakeCase').create(recursive: true);
+      }
     }
 
-    input.options[0] = '$nameSnakeCase/${input.options[0]}';
+    input.options[0] = '$nameSnakeCase/${names.last}';
 
     // Logic
     var status = await MakeLogicAction().exec(input);

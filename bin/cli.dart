@@ -32,12 +32,12 @@ void main(List<String> arguments) async {
   });
 
   if (action == null) {
-    printer.writeln('Invalid arguments (0x1) $arguments');
+    printer.writeln(printer.red('Invalid arguments (0x1), no command for: $arguments'));
     exit(1);
   }
 
   if (!action.verifyOptionsAndArguments(cmd)) {
-    printer.writeln('Invalid arguments (0x2) $arguments');
+    printer.writeln(printer.red('Invalid arguments (0x2), options or args for command is invalid: $arguments'));
     exit(2);
   }
 

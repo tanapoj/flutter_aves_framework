@@ -1,9 +1,5 @@
 import 'dart:io';
 
-import 'package:aves_support/common/extension/list.dart';
-import 'package:aves_support/common/extension/string.dart';
-import 'package:recase/recase.dart';
-
 import '../command.dart';
 import '../io/file.dart';
 import '../io/printer.dart';
@@ -30,6 +26,7 @@ class InitAction extends Action {
   exec(Command input) async {
     var outputDirectory = input.arguments['--dir'] ?? 'lib';
     var overwrite = input.arguments.containsKey('--overwrite');
+    var dry = input.arguments.containsKey('--dry');
 
     var dirs = [
       '$outputDirectory/app',
@@ -55,7 +52,9 @@ class InitAction extends Action {
       for (var dir in dirs) {
         var d = Directory(dir);
         if (!await d.exists()) {
-          d.create(recursive: true);
+          if (!dry) {
+            await d.create(recursive: true);
+          }
           printer.writeln('${printer.blue('    create directory:')} $dir');
         }
       }
@@ -64,123 +63,149 @@ class InitAction extends Action {
 
       // app
       printer.writeln('$prefix ${await _createFile(
-        outputDirectory,
-        'main.dart',
-        'init/main',
-        {
+        outputDir: outputDirectory,
+        outputFile: 'main.dart',
+        template: 'init/main',
+        vars: {
           '': '',
         },
-        overwrite,
+        overwrite: overwrite,
+        dry: dry,
       )}');
 
       printer.writeln('$prefix ${await _createFile(
-        '$outputDirectory/app',
-        'app_auth.dart',
-        'init/app/app_auth',
-        {
+        outputDir: '$outputDirectory/app',
+        outputFile: 'app_auth.dart',
+        template: 'init/app/app_auth',
+        vars: {
           '': '',
         },
-        overwrite,
+        overwrite: overwrite,
+        dry: dry,
       )}');
 
       printer.writeln('$prefix ${await _createFile(
-        '$outputDirectory/app',
-        'app_component.dart',
-        'init/app/app_component',
-        {
+        outputDir: '$outputDirectory/app',
+        outputFile: 'app_component.dart',
+        template: 'init/app/app_component',
+        vars: {
           '': '',
         },
-        overwrite,
+        overwrite: overwrite,
+        dry: dry,
       )}');
 
       printer.writeln('$prefix ${await _createFile(
-        '$outputDirectory/app',
-        'app_navigator.dart',
-        'init/app/app_navigator',
-        {
+        outputDir: '$outputDirectory/app',
+        outputFile: 'app_navigator.dart',
+        template: 'init/app/app_navigator',
+        vars: {
           '': '',
         },
-        overwrite,
+        overwrite: overwrite,
+        dry: dry,
       )}');
 
       printer.writeln('$prefix ${await _createFile(
-        '$outputDirectory/app',
-        'app_provider.dart',
-        'init/app/app_provider',
-        {
+        outputDir: '$outputDirectory/app',
+        outputFile: 'app_provider.dart',
+        template: 'init/app/app_provider',
+        vars: {
           '': '',
         },
-        overwrite,
+        overwrite: overwrite,
+        dry: dry,
       )}');
 
       printer.writeln('$prefix ${await _createFile(
-        '$outputDirectory/app',
-        'app_translator.dart',
-        'init/app/app_translator',
-        {
+        outputDir: '$outputDirectory/app',
+        outputFile: 'app_translator.dart',
+        template: 'init/app/app_translator',
+        vars: {
           '': '',
         },
-        overwrite,
+        overwrite: overwrite,
+        dry: dry,
       )}');
 
       printer.writeln('$prefix ${await _createFile(
-        '$outputDirectory/app',
-        'environment.dart',
-        'init/app/environment',
-        {
+        outputDir: '$outputDirectory/app',
+        outputFile: 'environment.dart',
+        template: 'init/app/environment',
+        vars: {
           '': '',
         },
-        overwrite,
-      )}');
-
-      // common
-      printer.writeln('$prefix ${await _createFile(
-        '$outputDirectory/common',
-        'helpers.dart',
-        'init/common/helpers',
-        {
-          '': '',
-        },
-        overwrite,
-      )}');
-
-      printer.writeln('$prefix ${await _createFile(
-        '$outputDirectory/common/extension',
-        'string.dart',
-        'init/common/extension/string',
-        {
-          '': '',
-        },
-        overwrite,
+        overwrite: overwrite,
+        dry: dry,
       )}');
 
       // common
       printer.writeln('$prefix ${await _createFile(
-        '$outputDirectory/model',
-        'user.dart',
-        'init/model/user',
-        {
+        outputDir: '$outputDirectory/common',
+        outputFile: 'helpers.dart',
+        template: 'init/common/helpers',
+        vars: {
           '': '',
         },
-        overwrite,
+        overwrite: overwrite,
+        dry: dry,
+      )}');
+
+      printer.writeln('$prefix ${await _createFile(
+        outputDir: '$outputDirectory/common/extension',
+        outputFile: 'string.dart',
+        template: 'init/common/extension/string',
+        vars: {
+          '': '',
+        },
+        overwrite: overwrite,
+        dry: dry,
+      )}');
+
+      // common
+      printer.writeln('$prefix ${await _createFile(
+        outputDir: '$outputDirectory/model',
+        outputFile: 'user.dart',
+        template: 'init/model/user',
+        vars: {
+          '': '',
+        },
+        overwrite: overwrite,
+        dry: dry,
       )}');
 
       // root
       printer.writeln('$prefix ${await _createFile(
-        '',
-        'build.yaml',
-        'init/build.yaml',
-        {
+        outputDir: '',
+        outputFile: 'build.yaml',
+        template: 'init/build.yaml',
+        vars: {
           '': '',
         },
-        overwrite,
+        overwrite: overwrite,
+        dry: dry,
+      )}');
+
+      printer.writeln('$prefix ${await _createFile(
+        outputDir: '.aves',
+        outputFile: 'aves_config.json',
+        template: '.aves/aves_config.json',
+        vars: {
+          '': '',
+        },
+        overwrite: overwrite,
+        dry: dry,
       )}');
 
       // HomePage
       var status = await MakePageAction().exec(Command(
         cmd: 'make:page',
         options: ['home'],
-        arguments: {'--dir': '$outputDirectory/ui/pages'},
+        arguments: {
+          '--dir': '$outputDirectory/ui/pages',
+          if (overwrite) '--overwrite': null,
+          if (dry) '--dry': null,
+        },
       ));
       if (status != 0) return status;
     } catch (e) {
@@ -191,43 +216,35 @@ class InitAction extends Action {
     return 0;
   }
 
-  Future<String?> _createFile(
-    String dir,
-    String outputFile,
-    String template,
-    Map<String, dynamic> vars,
-    bool overwrite,
-  ) async {
+  Future<String?> _createFile({
+    required String outputDir,
+    required String outputFile,
+    required String template,
+    required Map<String, dynamic> vars,
+    required bool overwrite,
+    required bool dry,
+  }) async {
     var content = await makeTemplate(template, vars);
 
     try {
-      var path = dir.isEmpty ? outputFile : '$dir/$outputFile';
+      var path = outputDir.isEmpty ? outputFile : '$outputDir/$outputFile';
       if (!overwrite && await File(path).exists()) {
         throw ConflictingOutputsException(
           'File "$path" already exist. if you want to override file, use flag --overwrite',
         );
       }
-      var d = Directory(dir);
-      if (dir.isNotEmpty && !await d.exists()) {
-        await d.create(recursive: true);
+      var d = Directory(outputDir);
+      if (outputDir.isNotEmpty && !await d.exists()) {
+        if (!dry) {
+          await d.create(recursive: true);
+        }
       }
-      await writeFile(path, content);
+      await writeFile(path, content, overwrite: overwrite, runDry: dry);
       return path;
     } catch (e) {
       if (e is ConflictingOutputsException) rethrow;
       printer.writeln(printer.red(e.toString()));
       return null;
     }
-  }
-}
-
-class ConflictingOutputsException extends Error {
-  final String message;
-
-  ConflictingOutputsException(this.message);
-
-  @override
-  String toString() {
-    return message;
   }
 }

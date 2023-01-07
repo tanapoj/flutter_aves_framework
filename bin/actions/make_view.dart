@@ -16,7 +16,6 @@ class MakeViewAction extends Action {
 
   @override
   bool checkCanExecCmd(Command input) {
-    if (input.cmd == 'make') return true;
     if (input.cmd == 'make:view') return true;
     return false;
   }
@@ -24,14 +23,16 @@ class MakeViewAction extends Action {
   @override
   bool verifyOptionsAndArguments(Command input) {
     String? viewName = input.options.elementAtOrNull(0);
-    var re = RegExp(r'^[a-zA-Z0-9_]{1,256}$');
     if (viewName == null) {
       printer.writeln(printer.red('-h'));
       return false;
     }
-    if (!re.hasMatch(viewName)) {
-      printer.writeln(printer.red('"$viewName" is not variable name format!'));
-      return false;
+    for (var n in viewName.split('/') ?? []) {
+      var re = RegExp(r'^[a-zA-Z_]{1}[a-zA-Z0-9_]{1,256}$');
+      if (!re.hasMatch(ReCase(n).snakeCase)) {
+        printer.writeln(printer.red('"$n" in "$viewName" is not variable name format!'));
+        return false;
+      }
     }
 
     return true;
@@ -40,6 +41,9 @@ class MakeViewAction extends Action {
   @override
   exec(Command input) async {
     var outputDirectory = input.arguments['--dir'] ?? 'lib/ui/pages';
+    var overwrite = input.arguments.containsKey('--overwrite');
+    var dry = input.arguments.containsKey('--dry');
+
     if (!outputDirectory.endsWith('/')) {
       outputDirectory += '/';
     }
@@ -64,7 +68,7 @@ class MakeViewAction extends Action {
     });
 
     try {
-      await writeFile(outputFile, content);
+      await writeFile(outputFile, content, overwrite: overwrite, runDry: dry);
       return 0;
     } catch (e) {
       printer.writeln(printer.red(e.toString()));

@@ -1,4 +1,15 @@
 Map<String,String> template = {
+"model.template": """/// Project: {{#projectName}}
+/// Author: {{#author}}
+/// Created at: {{#createdAt}}
+
+import 'package:flutter/material.dart';
+import 'package:flutter_live_data/index.dart';
+
+class {{#className}} {
+    int id;
+}
+""",
 "view.template": """/// Project: {{#projectName}}
 /// Author: {{#author}}
 /// Created at: {{#createdAt}}
@@ -217,6 +228,7 @@ class ExampleWidget {
 /// Created at: {{#createdAt}}
 
 """,
+"init/.aves/aves_config.json.template": """{}""",
 "init/common/helpers.template": """/// Project: {{#projectName}}
 /// Author: {{#author}}
 /// Created at: {{#createdAt}}

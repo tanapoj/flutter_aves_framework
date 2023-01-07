@@ -7,7 +7,7 @@ abstract class AvesNavigator {
     return Future.value(null);
   }
 
-  // Widget startup();
-  //
-  // Widget home();
+  Widget startup();
+
+  Widget home();
 }

@@ -2,7 +2,7 @@
 /// Author: ta
 /// Created at: 2023-01-04
 
-import 'package:aves/component/view.dart';
+import 'package:aves/architecture/component/view.dart';
 import 'package:flutter/material.dart';
 import 'developer.logic.dart';
 

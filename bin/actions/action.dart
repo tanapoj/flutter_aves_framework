@@ -6,6 +6,7 @@ import '../io/printer.dart';
 import 'build.dart';
 import 'init.dart';
 import 'make_logic.dart';
+import 'make_model.dart';
 import 'make_page.dart';
 import 'make_view.dart';
 
@@ -75,23 +76,20 @@ Future<String> welcomeText() async {
 Use fvm: ${useFvm ? printer.green('yes') : printer.red('no')}
 $flutterInfo
 Usage: 
-    ${printer.green('command')} [options] [arguments]
-    
-Options:
-    -h
+    ${printer.green('command')} [options] [--arguments]
     
 All commands:
   ${printer.yellow('initial')}
-    ${printer.green('init')}
+    ${printer.green('init')} [${printer.blue('--dir')} lib] [${printer.blue('--overwrite')}]
   ${printer.yellow('build_runner')}
     ${printer.green('build')}
     ${printer.green('build:model')}
     ${printer.green('build:injectable')}
   ${printer.yellow('make')}
-    ${printer.green('make:page')}
-    ${printer.green('make:logic')}
-    ${printer.green('make:view')}
-    ${printer.green('make:model')}
+    ${printer.green('make:page')}  [page_name]  [${printer.blue('--dir')} lib/ui/pages] [${printer.blue('--overwrite')}] [${printer.blue('--dry')}]
+    ${printer.green('make:logic')} [logic_name] [${printer.blue('--dir')} lib/ui/pages] [${printer.blue('--overwrite')}] [${printer.blue('--dry')}]
+    ${printer.green('make:view')}  [view_name]  [${printer.blue('--dir')} lib/ui/pages] [${printer.blue('--overwrite')}] [${printer.blue('--dry')}]
+    ${printer.green('make:model')} [page_name]  [${printer.blue('--dir')} lib/model] [${printer.blue('--overwrite')}] [${printer.blue('--dry')}] [${printer.blue('--no-prefix')}]
 """;
 }
 
@@ -101,4 +99,5 @@ List<Action> allActions = [
   MakePageAction(),
   MakeLogicAction(),
   MakeViewAction(),
+  MakeModelAction(),
 ];
