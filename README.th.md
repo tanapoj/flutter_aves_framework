@@ -1,6 +1,17 @@
 # Aves Framework
 
-Feature
+### Content
+
+- [Feature](#feature)
+- [Getting Started](#getting-started)
+- [CLI](#cli)
+- [Init Project](#init-project)
+- [Project Structure](#project-structure)
+
+## Feature
+
+Aves เป็นเฟรมเวิร์คสำหรับสร้าง Flutter Application
+
 - BLoC and MVVM Pattern
 - Networking
 - UI and Theming
@@ -8,15 +19,16 @@ Feature
 - Environment
 - Page-based State Management
 
-## Content
-
-- [CLI](#cli)
-- [Init Project](#init-project)
-- [Project Structure](#project-structure)
-
-## Getting started
+### Getting Started
 
 การติดตั้ง [https://pub.dev/packages/aves/install](https://pub.dev/packages/aves/install)
+
+เพิ่ม package ในโปรเจค
+```
+dependencies:
+  aves: {{version}}
+```
+จากนั้นให้รันคำสั่ง `aves init` เพื่อสร้างไฟล์สำคัญสำหรับโปรเจค (ดูหัวข้อ [CLI](#cli))
 
 ## CLI
 
@@ -39,9 +51,12 @@ fvm flutter pub run aves build:model
 fvm flutter pub run aves build:injectable
 ```
 
-
+การสร้างไฟล์
 ```
 fvm flutter pub run aves make:page
+fvm flutter pub run aves make:logic
+fvm flutter pub run aves make:view
+fvm flutter pub run aves make:model
 ```
 
 ## Project Structure
@@ -69,6 +84,19 @@ fvm flutter pub run aves make:page
 '-- .aves
     '-- aves_config.json
 ```
+
+- *app*: ไฟล์พื้นฐานของโปรเจค สามารถแก้ไขได้ (custom) สำหรับโปรเจคตัวเอง
+- *common*: ฟังก์ชันและคำสั่งทั่วไป เช่น helper function
+- *config*: การตั้งค่าสำหรับโปรเจค เช่นการกำหนดหน้าแรก หรือตั้งค่า environment
+- *data*: เลเยอร์สำหรับจัดการ Data 
+  - *network*: endpoint สำหรับเรียกข้อมูลจาก API
+  - *db*: Local Database
+  - *preference*: Shared Preference
+- *model*: โมเดลสำหรับเก็บข้อมูล
+- *ui*:
+  - *main*:
+  - *pages*:
+  - *widgets*:
 
 ```
 +-- Page --+
