@@ -50,6 +50,16 @@ fvm flutter pub run aves make:page
     '-- aves_config.json
 ```
 
+```
++-- Page --+
+|          |
+|   Logic <----> Service <-+-> NetworkApi
+|    |     |               |-> Database
+|   View   |               |-> Preference
+|          |
++----------+
+```
+
 ## Dependency Injection
 
 ## Page
