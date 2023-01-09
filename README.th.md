@@ -272,7 +272,7 @@ class MyService {
 
 ```dart
 class MyPageLogic extends ComponentLogic {
-  
+
   _changeLanguage() {
     if (translator.isUsingEnglish) {
       translator.useThai();
@@ -282,7 +282,7 @@ class MyPageLogic extends ComponentLogic {
       translator.useEnglish();
     }
   }
-  
+
 }
 ```
 
@@ -295,14 +295,16 @@ class MyPageLogic extends ComponentLogic {
 ```
 
 ```dart
-Text(tt.my_page.title);
+build(BuildContext context) {
+  return Text(tt.my_page.title);
+}
 ```
 
 ## UI and Theming
 
 ```dart
 class MyPageLogic extends ComponentLogic {
-  
+
   _changeTheme() {
     if (ui.isUsingTheme1) {
       ui.useTheme2();
@@ -312,6 +314,42 @@ class MyPageLogic extends ComponentLogic {
       ui.useTheme1();
     }
   }
-  
+
+}
+```
+
+## Auth and User
+
+```dart
+class MyPageLogic extends ComponentLogic {
+
+  _f() {
+    if (auth.isLogin) {
+      User user = auth.user!;
+    }
+  }
+
+}
+```
+
+## AppProvider
+
+- auth
+- translate
+- ui
+
+```dart
+class MyPageLogic extends ComponentLogic {
+
+  _f() {
+    app().override(
+      context: AppContext()
+        ..auth = AppAuth.mock(user: User()),
+      action: (prev, cur) {
+        // TODO  
+      },
+    );
+  }
+
 }
 ```
