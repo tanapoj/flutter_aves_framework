@@ -11,3 +11,23 @@ abstract class AvesNavigator {
 
   Widget home();
 }
+
+class NavigatorResult {
+  final int code;
+  final Map<String, dynamic> result;
+
+  NavigatorResult({
+    this.code = 0,
+    this.result = const {},
+  });
+
+  put(String key, dynamic value) {
+    result[key] = value;
+  }
+
+  dynamic get(String key) {
+    return result.containsKey(key) ? result[key] : null;
+  }
+
+  dynamic operator [](String key) => get(key);
+}

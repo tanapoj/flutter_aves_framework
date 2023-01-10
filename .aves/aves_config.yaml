@@ -1,0 +1,7 @@
+# main command for run flutter: 'flutter' or 'fvm'
+engine: fvm
+
+template:
+#  logic: assets/my_logic.template
+#  view: assets/my_view.template
+#  model: assets/my_model.template
