@@ -1,0 +1,10 @@
+# main command for run flutter: 'flutter' or 'fvm'
+engine: fvm
+
+# 'none', 'overwrite'
+delete-conflicting-outputs: none
+
+template:
+#  logic: assets/my_logic.template
+#  view: assets/my_view.template
+#  model: assets/my_model.template

@@ -2,3 +2,11 @@
 /// Author: {{#author}}
 /// Created at: {{#createdAt}}
 
+import 'package:aves/architecture/auth.dart';
+
+class AppAuth<User> extends AvesAuth<User> {
+  @override
+  String toString() {
+    return 'AppAuth{$user}';
+  }
+}

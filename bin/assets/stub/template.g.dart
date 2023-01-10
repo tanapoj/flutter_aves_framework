@@ -2,6 +2,26 @@
 /// to generate, run: fvm flutter pub run aves:gen
 
 Map<String,String> template = {
+"view-blank.template": """/// Project: {{#projectName}}
+/// Author: {{#author}}
+/// Created at: {{#createdAt}}
+
+import 'package:aves/index.dart';
+import 'package:flutter/material.dart';
+import 'package:{{#projectName}}/app/index.dart' as app;
+import '{{#class_name}}.logic.dart';
+
+class {{#className}}View extends app.View<{{#className}}Logic> {
+  const {{#className}}View({{#className}}Logic logic, {Key? key}) : super(logic, key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: const Text('placeholder for {{#className}}'),
+    );
+  }
+}
+""",
 "model.template": """/// Project: {{#projectName}}
 /// Author: {{#author}}
 /// Created at: {{#createdAt}}
@@ -39,20 +59,31 @@ class {{#className}} {
 /// Author: {{#author}}
 /// Created at: {{#createdAt}}
 
+import 'package:aves/index.dart';
 import 'package:flutter/material.dart';
 import 'package:{{#projectName}}/app/index.dart' as app;
 import '{{#class_name}}.logic.dart';
 
 class {{#className}}View extends app.View<{{#className}}Logic> {
-  {{#className}}View(
-    {{#className}}Logic logic, {
-    Key? key,
-  }) : super(logic, key: key);
+  const {{#className}}View({{#className}}Logic logic, {Key? key}) : super(logic, key: key);
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Text('placeholder for {{#className}}'),
+    return Center(
+      child: Column(
+        children: [
+          const Text('placeholder for {{#className}}'),
+          \$watch(logic.\$counter, build: (_, int count) {
+            return Text('count is \$count');
+          }),
+          ElevatedButton(
+            onPressed: () {
+              logic.increment();
+            },
+            child: const Text('increment'),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -60,12 +91,12 @@ class {{#className}}View extends app.View<{{#className}}Logic> {
 "test.template": """class {{#className}}{
     int x = 0;
 }""",
-"logic.template": """/// Project: {{#projectName}}
+"logic-blank.template": """/// Project: {{#projectName}}
 /// Author: {{#author}}
 /// Created at: {{#createdAt}}
 
+import 'package:aves/index.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_live_data/index.dart';
 import 'package:{{#projectName}}/app/index.dart';
 import '{{#class_name}}.view.dart';
 
@@ -73,6 +104,33 @@ class {{#className}}Logic extends ComponentLogic {
   @override
   String get name => '{{#class_name}}';
 
+  {{#className}}Logic({
+    Key? key,
+    required Widget Function(ComponentLogic) builder,
+  }) : super(key: key, builder: builder);
+
+  factory {{#className}}Logic.build() {
+    return {{#className}}Logic(
+      builder: (logic) => {{#className}}View(logic as {{#className}}Logic),
+    );
+  }
+}
+""",
+"logic.template": """/// Project: {{#projectName}}
+/// Author: {{#author}}
+/// Created at: {{#createdAt}}
+
+import 'package:aves/index.dart';
+import 'package:flutter/material.dart';
+import 'package:{{#projectName}}/app/index.dart';
+import '{{#class_name}}.view.dart';
+
+class {{#className}}Logic extends ComponentLogic {
+  @override
+  String get name => '{{#class_name}}';
+
+  /// Class Parameters
+  /// if you want to customize, add here, then add parameter to constructor and build
   final LifeCycleOwner? parent;
 
   {{#className}}Logic({
@@ -86,6 +144,49 @@ class {{#className}}Logic extends ComponentLogic {
       parent: parent,
       builder: (logic) => {{#className}}View(logic as {{#className}}Logic),
     );
+  }
+
+  /// Define LiveData
+  late final LiveData<int> \$counter = LiveData(0).owner(this);
+  late final LiveData<String?> \$nullable = LiveData<String?>(null).owner(this);
+
+  /// LiveCycle Listener
+  /// if no use, you can remove them
+
+  @override
+  onCreate() {
+    super.onCreate();
+    // TODO when page constructed
+  }
+
+  @override
+  onInit() {
+    super.onInit();
+    // TODO when page start running
+  }
+
+  @override
+  onResume() {
+    super.onResume();
+    // TODO when page resume after it paused
+  }
+
+  @override
+  onPause() {
+    // TODO when page leaving from display
+    super.onPause();
+  }
+
+  @override
+  onDispose() {
+    // TODO when page destroy (end of running)
+    super.onDispose();
+  }
+
+  /// Define action
+  /// custom method, called by view
+  increment() {
+    \$counter.value++;
   }
 }
 """,

@@ -43,6 +43,7 @@ class MakeLogicAction extends Action {
     var outputDirectory = input.arguments['--dir'] ?? 'lib/ui/pages';
     var overwrite = input.arguments.containsKey('--overwrite');
     var dry = input.arguments.containsKey('--dry');
+    var useBlankTemplate = input.arguments.containsKey('--blank');
 
     if (!outputDirectory.endsWith('/')) {
       outputDirectory += '/';
@@ -61,7 +62,8 @@ class MakeLogicAction extends Action {
     printer.writeln('${printer.blue('[i] generate template for class:')} ${nameCamelCase}Logic');
     printer.writeln('${printer.blue('    create file:')} $outputFile');
 
-    var content = await makeTemplate('logic', {
+    var templateName = useBlankTemplate ? 'logic-blank' : 'logic';
+    var content = await makeTemplate(templateName, {
       'fileName': outputFile,
       'className': nameCamelCase,
       'class_name': nameSnakeCase,

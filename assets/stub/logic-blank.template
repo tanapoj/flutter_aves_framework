@@ -1,0 +1,24 @@
+/// Project: {{#projectName}}
+/// Author: {{#author}}
+/// Created at: {{#createdAt}}
+
+import 'package:aves/index.dart';
+import 'package:flutter/material.dart';
+import 'package:{{#projectName}}/app/index.dart';
+import '{{#class_name}}.view.dart';
+
+class {{#className}}Logic extends ComponentLogic {
+  @override
+  String get name => '{{#class_name}}';
+
+  {{#className}}Logic({
+    Key? key,
+    required Widget Function(ComponentLogic) builder,
+  }) : super(key: key, builder: builder);
+
+  factory {{#className}}Logic.build() {
+    return {{#className}}Logic(
+      builder: (logic) => {{#className}}View(logic as {{#className}}Logic),
+    );
+  }
+}

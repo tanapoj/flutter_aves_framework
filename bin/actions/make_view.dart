@@ -43,6 +43,7 @@ class MakeViewAction extends Action {
     var outputDirectory = input.arguments['--dir'] ?? 'lib/ui/pages';
     var overwrite = input.arguments.containsKey('--overwrite');
     var dry = input.arguments.containsKey('--dry');
+    var useBlankTemplate = input.arguments.containsKey('--blank');
 
     if (!outputDirectory.endsWith('/')) {
       outputDirectory += '/';
@@ -61,7 +62,8 @@ class MakeViewAction extends Action {
     printer.writeln('${printer.blue('[i] generate template for class:')} ${nameCamelCase}View');
     printer.writeln('${printer.blue('    create file:')} $outputFile');
 
-    var content = await makeTemplate('view', {
+    var templateName = useBlankTemplate ? 'view-blank' : 'view';
+    var content = await makeTemplate(templateName, {
       'fileName': outputFile,
       'className': nameCamelCase,
       'class_name': nameSnakeCase,

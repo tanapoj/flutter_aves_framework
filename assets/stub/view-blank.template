@@ -13,20 +13,7 @@ class {{#className}}View extends app.View<{{#className}}Logic> {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Column(
-        children: [
-          const Text('placeholder for {{#className}}'),
-          $watch(logic.$counter, build: (_, int count) {
-            return Text('count is $count');
-          }),
-          ElevatedButton(
-            onPressed: () {
-              logic.increment();
-            },
-            child: const Text('increment'),
-          ),
-        ],
-      ),
+      child: const Text('placeholder for {{#className}}'),
     );
   }
 }
