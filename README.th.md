@@ -219,7 +219,56 @@ class MyPageLogic extends ComponentLogic {
 ```dart
 class MyPageView extends View<MyPageLogic> {
   _navigateNextPage() {
-    logic.nav.push(context!, NextPage.build());
+    nav.push(context!, NextPage.build());
+  }
+}
+```
+
+### Routing with Result
+
+การส่งข้อมูลระหว่างหน้า สามารถทำได้โดยเพิ่ม parameter ในฟังก์ชัน `build` และ constructor ได้เลย
+
+```dart
+class APage extends ComponentLogic {
+  _navigateToB() async {
+    NavigatorResult result = await nav.push(context!, BPage.build(
+      label: 'Test Label',
+    ));
+    
+    if(result.code == 123) {
+      appLog.d('x is ${result['x']}');
+    }
+  }
+}
+```
+
+ส่วนการส่งข้อมูลมาหน้าต้นทาง สามารถส่งผ่านคำสั่ง `pop` โดยสร้าง `NavigatorResult` ขึ้นมา
+
+```dart
+class BPage extends ComponentLogic {
+  
+  final String label;
+  
+  BPage({
+    Key? key,
+    required this.label,
+    required Widget Function(ComponentLogic) builder,
+  }) : super(key: key, builder: builder);
+
+  factory BPage.build(String label) {
+    return BPage(
+      label: label,
+      // other fields ...
+    );
+  }
+  
+  _navigateBackToA() {
+    nav.pop(context!, result: NavigatorResult(
+      code: 123,
+      data: {
+        'x': 1,
+      },
+    ));
   }
 }
 ```
