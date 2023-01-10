@@ -2,3 +2,35 @@
 /// Author: {{#author}}
 /// Created at: {{#createdAt}}
 
+import 'package:aves/index.dart' as aves;
+import 'package:flutter/widgets.dart';
+
+@immutable
+class Environment extends aves.Environment {
+  @override
+  String get appName => 'Bellugg';
+
+  @override
+  int get logLevel => 1;
+
+  @override
+  bool get isProduction {
+    return false;
+  }
+
+  @override
+  bool get isDebugMode {
+    return true;
+  }
+
+  @override
+  bool get isUsingNetworkMockData => false;
+
+  bool get isLogging => false;
+
+  bool get isSystemLogging => false;
+
+  bool get isEnableAds => true;
+
+  String get baseUrl => 'https://test.co';
+}

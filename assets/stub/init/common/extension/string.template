@@ -2,3 +2,8 @@
 /// Author: {{#author}}
 /// Created at: {{#createdAt}}
 
+extension StringExample on String {
+  String example() {
+    return 'example of $this';
+  }
+}

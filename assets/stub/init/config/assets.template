@@ -1,0 +1,9 @@
+/// Project: {{#projectName}}
+/// Author: {{#author}}
+/// Created at: {{#createdAt}}
+
+String imagePath(String file, [String extension = "png"]) => "assets/images/$file.$extension";
+
+class Assets {
+  static String logo = imagePath("logo", "png");
+}

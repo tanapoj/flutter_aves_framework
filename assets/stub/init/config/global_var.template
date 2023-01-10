@@ -1,0 +1,9 @@
+/// Project: {{#projectName}}
+/// Author: {{#author}}
+/// Created at: {{#createdAt}}
+
+import 'package:aves/index.dart';
+
+class GlobalVar {
+  late final LiveData<int> $counter = LiveData(0);
+}

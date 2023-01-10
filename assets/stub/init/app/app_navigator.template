@@ -2,3 +2,40 @@
 /// Author: {{#author}}
 /// Created at: {{#createdAt}}
 
+import 'package:aves/architecture/navigator.dart';
+import 'package:flutter/material.dart';
+import 'package:{{#projectName}}/common/log.dart';
+import 'package:{{#projectName}}/ui/pages/home/home.logic.dart';
+import 'package:{{#projectName}}/ui/main/startup.dart';
+
+class AppNavigator extends AvesNavigator {
+  @override
+  Widget startup() => StartupPage.build();
+
+  @override
+  Widget home() => HomeLogic.build();
+
+  Future<NavigatorResult> push(BuildContext context, Widget Function(BuildContext context) builder) async {
+    var result = await Navigator.push(context, MaterialPageRoute(builder: builder));
+    if (result is NavigatorResult) {
+      sysLog.i('pop page with result: $result');
+      return result;
+    }
+    return NavigatorResult(data: {'result': result});
+  }
+
+  Future<NavigatorResult> pushReplacement(BuildContext context, Widget Function(BuildContext context) builder) async {
+    var result = await Navigator.pushReplacement(context, MaterialPageRoute(builder: builder));
+    if (result is NavigatorResult) {
+      sysLog.i('pop page with result: $result');
+      return result;
+    }
+    return NavigatorResult(data: {'result': result});
+  }
+
+  AppNavigator pop<T extends Object?>(BuildContext context, {NavigatorResult? result}) {
+    result ??= NavigatorResult();
+    Navigator.pop(context, result);
+    return this;
+  }
+}

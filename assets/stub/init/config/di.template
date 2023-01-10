@@ -1,0 +1,23 @@
+/// Project: {{#projectName}}
+/// Author: {{#author}}
+/// Created at: {{#createdAt}}
+
+import 'package:aves/index.dart';
+import 'package:get_it/get_it.dart';
+import 'package:injectable/injectable.dart';
+import 'package:{{#projectName}}/config/di.config.dart';
+
+void setDefaultDependencies(AvesDi di) {
+  di.singletonFactory<int>((c) {
+    return 1;
+  }, instanceName: 'app-version');
+}
+
+final getIt = GetIt.instance;
+
+@InjectableInit(
+  initializerName: r'$initGetIt', // default
+  preferRelativeImports: true, // default
+  asExtension: false, // default
+)
+void configureDependencies() => $initGetIt(getIt);

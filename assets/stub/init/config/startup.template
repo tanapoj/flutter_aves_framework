@@ -1,0 +1,21 @@
+/// Project: {{#projectName}}
+/// Author: {{#author}}
+/// Created at: {{#createdAt}}
+
+import 'package:aves/index.dart';
+import 'package:flutter/material.dart';
+import 'package:{{#projectName}}/app/index.dart';
+import 'package:{{#projectName}}/config/di.dart';
+
+Future<void> startup(BuildContext context) async {
+  var provider = App.of(context);
+  await provider.asyncInit();
+  configureDependencies();
+  setDefaultDependencies(Di().container);
+  return await _startup(context);
+}
+
+Future<void> _startup(BuildContext context) async {
+  // custom...
+  return Future.delayed(const Duration(seconds: 1));
+}

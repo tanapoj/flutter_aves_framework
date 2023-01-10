@@ -2,3 +2,6 @@
 /// Author: {{#author}}
 /// Created at: {{#createdAt}}
 
+int add(int x, int y) {
+    return x + y;
+}

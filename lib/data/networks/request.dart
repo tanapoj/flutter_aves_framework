@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'dart:convert';
+import 'package:aves/architecture/environment.dart';
 import 'package:aves/data/networks/network.dart' as network;
 import 'package:aves/data/networks/response.dart';
 import 'package:flutter/services.dart' show rootBundle;
@@ -153,11 +154,37 @@ class MockResponse<T> {
   int responseTime = 1;
 }
 
-RequestInterceptor useMockData({
-  required String fileName,
+RequestInterceptor useNothing() {
+  return RequestInterceptor(interceptor: (Request request) async {
+    return RequestInterceptorFlow(request, false);
+  });
+}
+
+RequestInterceptor useJustJson({
+  required String jsonString,
   Duration? responseTime,
   int statusCode = 200,
 }) {
+  return RequestInterceptor(interceptor: (Request request) async {
+    var m = jsonDecode(jsonString);
+    return RequestInterceptorFlow(request, true,
+        response: Response(
+          statusCode: statusCode,
+          data: m,
+          body: jsonString,
+        ));
+  });
+}
+
+RequestInterceptor useMockData({
+  required String fileName,
+  required Environment env,
+  Duration? responseTime,
+  int statusCode = 200,
+}) {
+  if (!env.isUsingNetworkMockData) {
+    return useNothing();
+  }
   int randInt(int from, int to) => Random().nextInt(to - from + 1) + from;
   responseTime ??= Duration(milliseconds: randInt(200, 800));
   return RequestInterceptor(interceptor: (Request request) async {

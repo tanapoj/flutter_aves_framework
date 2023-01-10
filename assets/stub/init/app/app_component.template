@@ -2,3 +2,75 @@
 /// Author: {{#author}}
 /// Created at: {{#createdAt}}
 
+import 'package:aves/architecture/component/logic.dart' as l;
+import 'package:aves/architecture/component/view.dart' as v;
+import 'package:aves/common/syslog.dart';
+import 'package:flutter/material.dart';
+import 'package:{{#projectName}}/config/global_var.dart';
+import 'package:{{#projectName}}/model/user.dart';
+import 'index.dart';
+
+abstract class ComponentLogic<T> extends l.Logic<T> {
+  ComponentLogic({
+    Key? key,
+    required Widget Function(ComponentLogic) builder,
+  }) : super(key: key, builder: (component) => builder(component as ComponentLogic));
+
+  AppNavigator get nav {
+    if (context == null) {
+      sysLog.e('context is null');
+      throw Exception();
+    }
+    return App.of(context!).navigator;
+  }
+
+  AppTranslator get translator {
+    if (context == null) {
+      sysLog.e('context is null');
+      throw Exception();
+    }
+
+    return App.of(context!).translator;
+  }
+
+  AppUi get ui {
+    if (context == null) {
+      sysLog.e('context is null');
+      throw Exception();
+    }
+    return App.of(context!).ui;
+  }
+
+  AppAuth<User> get auth {
+    if (context == null) {
+      sysLog.e('context is null');
+      throw Exception();
+    }
+    return App.of(context!).auth;
+  }
+
+  GlobalVar get global {
+    if (context == null) {
+      sysLog.e('context is null');
+      throw Exception();
+    }
+    return App.of(context!).global;
+  }
+}
+
+abstract class View<BC extends ComponentLogic> extends v.View<BC> {
+  const View(
+    BC component, {
+    Key? key,
+  }) : super(component, key: key);
+
+  AppNavigator get nav => logic.nav;
+
+  AppTranslator get translator => logic.translator;
+
+  AppUi get ui => logic.ui;
+
+  AppAuth<User> get auth => logic.auth;
+
+  GlobalVar get global => logic.global;
+}

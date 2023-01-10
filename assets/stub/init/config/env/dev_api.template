@@ -1,0 +1,50 @@
+/// Project: {{#projectName}}
+/// Author: {{#author}}
+/// Created at: {{#createdAt}}
+
+import 'package:flutter/widgets.dart';
+import 'package:{{#projectName}}/app/index.dart';
+
+@immutable
+class DevApiEnvironment extends Environment {
+  @override
+  String get envName => 'dev-api env';
+
+  @override
+  String get appName => 'Aves (Dev API)';
+
+  @override
+  int get logLevel => 1;
+
+  @override
+  bool get isProduction {
+    return false;
+  }
+
+  @override
+  bool get isDebugMode {
+    return true;
+  }
+
+  @override
+  bool get isUsingNetworkMockData => false;
+
+  @override
+  bool get isLogging => true;
+
+  @override
+  bool get isSystemLogging => true;
+
+  @override
+  String get baseUrl => 'https://api.aves.com';
+
+  @override
+  String toString() {
+    return 'DevApiEnvironment{\n'
+        '   envName: $envName (isProduction: $isProduction, isDebugMode: $isDebugMode, isUsingNetworkMockData: $isUsingNetworkMockData)\n'
+        '   appName: $appName\n'
+        '   logLevel: $logLevel\n'
+        '   baseUrl: $baseUrl\n'
+        '}';
+  }
+}

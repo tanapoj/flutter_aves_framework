@@ -2,3 +2,78 @@
 /// Author: {{#author}}
 /// Created at: {{#createdAt}}
 
+import 'package:aves/index.dart';
+import 'package:{{#projectName}}/app/app_provider.dart';
+import 'package:{{#projectName}}/config/lang/translations.g.dart';
+import 'package:{{#projectName}}/data/preferences/framework_preference.dart';
+
+class _AppTranslator extends TranslationsEn {
+  final FrameworkPreference _pref = FrameworkPreference();
+
+  _AppTranslator() : super.build();
+
+  AppLocale _locale = AppLocale.en;
+
+  AppLocale get locale => _locale;
+
+  LiveDataSource<AppLocale> $state = LiveDataSource(
+    AppLocale.en,
+    dataSourceInterface: null,
+  );
+
+  syncInit() {}
+
+  asyncInit() async {
+    setLocale(await _pref.getAppLocale());
+    $state.dataSourceInterface = createDataSourceInterface<AppLocale>(
+      loadValueAction: null,
+      onValueUpdatedAction: (AppLocale value, bool hasChange) async {
+        _pref.setAppLocale(value);
+      },
+    );
+    return Future.value(null);
+  }
+
+  setLocale(AppLocale locale) {
+    _locale = locale;
+    LocaleSettings.instance.setLocale(_locale);
+  }
+}
+
+class AppTranslator extends _AppTranslator {
+  AppTranslator(App provider) : super() {
+    $state.listen((value) {
+      provider.$state.tick();
+    });
+  }
+
+  switchLocale(AppLocale newLocale) {
+    setLocale(newLocale);
+
+    if (locale == AppLocale.en) {
+      LocaleSettings.instance.setLocale(AppLocale.en);
+      $state.value = locale;
+    }
+    if (locale == AppLocale.th) {
+      LocaleSettings.instance.setLocale(AppLocale.th);
+      $state.value = locale;
+    }
+  }
+
+  void useEnglish() {
+    switchLocale(AppLocale.en);
+  }
+
+  void useThai() {
+    switchLocale(AppLocale.th);
+  }
+
+  bool get isUsingEnglish => locale == AppLocale.en;
+
+  bool get isUsingThai => locale == AppLocale.th;
+
+  @override
+  String toString() {
+    return 'AppTranslator{${$state.value}}';
+  }
+}
