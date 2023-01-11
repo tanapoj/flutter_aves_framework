@@ -1,4 +1,8 @@
+import 'package:aves/architecture/di.dart';
 import 'package:aves/common/syslog.dart';
+import 'package:aves/data/db/database.dart';
+import 'package:aves/data/db/entities/app_log.entity.dart';
+import 'package:aves_support/common/extension/string.dart';
 import 'package:flutter/foundation.dart';
 import 'package:logger/logger.dart' as leisim;
 
@@ -24,24 +28,27 @@ class Logger implements leisim.Logger {
   }
 
   _printMultiLine(String output, {String suffix = ''}) {
-    List<String> chunk(String str, int size) {
-      if (str.length <= size) return [str];
-      List<String> list = [];
-      String c = str.substring(0, size);
-      str = str.substring(size);
-      while (c.isNotEmpty) {
-        list.add(c);
-        if (str.length <= size) {
-          list.add(str);
-          return list;
-        }
-        c = str.substring(0, size);
-        str = str.substring(size);
-      }
-      return [];
-    }
+    // List<String> chunk(String str, int size) {
+    //   if (str.length <= size) return [str];
+    //   List<String> list = [];
+    //   String c = str.substring(0, size);
+    //   str = str.substring(size);
+    //   while (c.isNotEmpty) {
+    //     list.add(c);
+    //     if (str.length <= size) {
+    //       list.add(str);
+    //       return list;
+    //     }
+    //     c = str.substring(0, size);
+    //     str = str.substring(size);
+    //   }
+    //   return [];
+    // }
 
-    var cs = chunk(output, 1000);
+    // AppDatabase db = inject<AppDatabase>().db;
+    // db.appLogDao.insertLog(AppLogEntity(1, 'logType', 'message')).then((value) => null);
+
+    var cs = output.chunk(1000);
     if (cs.isNotEmpty && cs.last.length + suffix.length <= 1000) {
       cs[cs.length - 1] = '${cs[cs.length - 1]}$suffix';
     } else {

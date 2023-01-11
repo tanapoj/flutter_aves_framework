@@ -13,6 +13,6 @@ abstract class AppDatabase extends FloorDatabase {
   late final AppDatabase db;
 
   init() async {
-    db = await $FloorAppDatabase.databaseBuilder('app_database.db').build();
+    // db = await $FloorAppDatabase.databaseBuilder('app_database.db').build();
   }
 }

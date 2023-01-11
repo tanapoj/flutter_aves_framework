@@ -112,6 +112,16 @@ class _$AppLogDao extends AppLogDao {
                   'log_type': item.logType,
                   'message': item.message
                 },
+            changeListener),
+        _appLogEntityDeletionAdapter = DeletionAdapter(
+            database,
+            'app_log',
+            ['id'],
+            (AppLogEntity item) => <String, Object?>{
+                  'id': item.id,
+                  'log_type': item.logType,
+                  'message': item.message
+                },
             changeListener);
 
   final sqflite.DatabaseExecutor database;
@@ -122,25 +132,43 @@ class _$AppLogDao extends AppLogDao {
 
   final InsertionAdapter<AppLogEntity> _appLogEntityInsertionAdapter;
 
+  final DeletionAdapter<AppLogEntity> _appLogEntityDeletionAdapter;
+
   @override
   Future<List<AppLogEntity>> findAllLogs() async {
-    return _queryAdapter.queryList('SELECT * FROM Person',
+    return _queryAdapter.queryList('SELECT * FROM app_log',
         mapper: (Map<String, Object?> row) => AppLogEntity(row['id'] as int,
             row['log_type'] as String, row['message'] as String));
   }
 
   @override
   Stream<AppLogEntity?> findLogById(int id) {
-    return _queryAdapter.queryStream('SELECT * FROM Person WHERE id = ?1',
+    return _queryAdapter.queryStream('SELECT * FROM app_log WHERE id = ?1',
         mapper: (Map<String, Object?> row) => AppLogEntity(row['id'] as int,
             row['log_type'] as String, row['message'] as String),
         arguments: [id],
-        queryableName: 'Person',
+        queryableName: 'app_log',
+        isView: false);
+  }
+
+  @override
+  Stream<List<AppLogEntity>> findLogBefore(int id) {
+    return _queryAdapter.queryListStream(
+        'SELECT * FROM task app_log WHERE id < ?1',
+        mapper: (Map<String, Object?> row) => AppLogEntity(row['id'] as int,
+            row['log_type'] as String, row['message'] as String),
+        arguments: [id],
+        queryableName: 'task',
         isView: false);
   }
 
   @override
   Future<void> insertLog(AppLogEntity log) async {
     await _appLogEntityInsertionAdapter.insert(log, OnConflictStrategy.abort);
+  }
+
+  @override
+  Future<void> deleteTasks(List<AppLogEntity> tasks) async {
+    await _appLogEntityDeletionAdapter.deleteList(tasks);
   }
 }
