@@ -28,17 +28,21 @@ class BuildAction extends Action {
 
   @override
   exec(Command input) async {
-    try {
+    var avesConfig = await getAvesConfigYaml();
+    bool useFvm = avesConfig['command'] == 'fvm';
+
+    if (useFvm) {
       await _runSystemCommand(
         'fvm',
         ['flutter', 'pub', 'run', 'build_runner', 'build', '--delete-conflicting-outputs'],
       );
-    } catch (e) {
+    } else {
       await _runSystemCommand(
         'flutter',
         ['pub', 'run', 'build_runner', 'build', '--delete-conflicting-outputs'],
       );
     }
+
     return 0;
   }
 }

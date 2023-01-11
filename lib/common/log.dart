@@ -28,22 +28,6 @@ class Logger implements leisim.Logger {
   }
 
   _printMultiLine(String output, {String suffix = ''}) {
-    // List<String> chunk(String str, int size) {
-    //   if (str.length <= size) return [str];
-    //   List<String> list = [];
-    //   String c = str.substring(0, size);
-    //   str = str.substring(size);
-    //   while (c.isNotEmpty) {
-    //     list.add(c);
-    //     if (str.length <= size) {
-    //       list.add(str);
-    //       return list;
-    //     }
-    //     c = str.substring(0, size);
-    //     str = str.substring(size);
-    //   }
-    //   return [];
-    // }
 
     // AppDatabase db = inject<AppDatabase>().db;
     // db.appLogDao.insertLog(AppLogEntity(1, 'logType', 'message')).then((value) => null);
@@ -61,17 +45,7 @@ class Logger implements leisim.Logger {
   @override
   void v(message, [error, StackTrace? stackTrace]) {
     if (level.index >= leisim.Level.verbose.index && kDebugMode) {
-      List<String> stackTraceLine = '${StackTrace.current}'
-          .split('\n')
-          .where((line) => line.length > 2)
-          .map((line) => line.substring(1).replaceAll(RegExp(r'^([0-9])+'), '').trim())
-          .takeWhile((line) => !line.contains('package:flutter'))
-          .skip(1)
-          .toList();
-
-      String stackTrace = stackTraceLine.isNotEmpty ? stackTraceLine[0] : '';
-
-      _printMultiLine('${black('[v]')} ${message.toString()}', suffix: ' ${black(' at: $stackTrace')}');
+      _printMultiLine('${black('[VERBOSE]')} ${message.toString()}');
     }
   }
 
@@ -87,10 +61,6 @@ class Logger implements leisim.Logger {
           .toList();
 
       String stackTrace = stackTraceLine.isNotEmpty ? stackTraceLine[0] : '';
-
-      // print('${green('🧪')} ${message.toString()}'
-      //     '\n'
-      //     '   ${green('└──── at: $stackTrace')}');
 
       _printMultiLine('${green('[DEBUG]')} ${message.toString()}', suffix: ' ${green(' at: $stackTrace')}');
     }

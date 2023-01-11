@@ -7,8 +7,11 @@ import 'io/printer.dart';
 void main(List<String> arguments) async {
   printer.writeln(printer.green('Aves CLI start...'));
 
+  var avesConfig = await getAvesConfigYaml();
+  bool useFvm = avesConfig['command'] == 'fvm';
+
   if (arguments.isEmpty) {
-    printer.writeln(await welcomeText());
+    printer.writeln(await welcomeText(useFvm: useFvm));
     return;
   }
 

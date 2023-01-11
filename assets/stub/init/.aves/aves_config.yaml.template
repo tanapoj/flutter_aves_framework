@@ -1,5 +1,5 @@
 # main command for run flutter: 'flutter' or 'fvm'
-engine: fvm
+command: {{#command}}
 
 # 'none', 'overwrite'
 delete-conflicting-outputs: none

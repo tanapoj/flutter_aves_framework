@@ -98,7 +98,7 @@ abstract class AvesNavigator {
   Future<NavigatorResult> push(
     BuildContext context,
     Widget Function(BuildContext context) builder, {
-    Key? refKey,
+    Key? routeRefKey,
     NavigatorTransition? navigatorTransition,
   }) async {
     navigatorTransition ??= defaultTransition;
@@ -108,7 +108,7 @@ abstract class AvesNavigator {
       navigatorTransition(
         context,
         builder,
-        settings: refKey == null ? null : RouteSettings(arguments: refKey),
+        settings: routeRefKey == null ? null : RouteSettings(arguments: routeRefKey),
       ),
     );
 
@@ -123,12 +123,12 @@ abstract class AvesNavigator {
   Future<NavigatorResult> pushReplacement(
     BuildContext context,
     Widget Function(BuildContext context) builder, {
-    Key? refKey,
+    Key? routeRefKey,
   }) async {
     var result = await Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-        settings: refKey == null ? null : RouteSettings(arguments: refKey),
+        settings: routeRefKey == null ? null : RouteSettings(arguments: routeRefKey),
         builder: builder,
       ),
     );
@@ -167,28 +167,28 @@ abstract class AvesNavigator {
 class AvesRouterFacade {
   final AvesNavigator appNavigator;
   final BuildContext context;
-  final String checkPointName;
+  final String routeRefName;
 
   AvesRouterFacade({
     required this.appNavigator,
     required this.context,
-    required this.checkPointName,
+    required this.routeRefName,
   });
 
   Future<NavigatorResult> push(
     Widget Function(BuildContext context) builder, {
-    Key? refKey,
+    Key? routeRefKey,
     bool replacement = false,
   }) async {
-    refKey ??= ValueKey(checkPointName);
+    routeRefKey ??= ValueKey(routeRefName);
 
     NavigatorResult result = replacement
-        ? await appNavigator.pushReplacement(context, builder, refKey: refKey)
-        : await appNavigator.push(context, builder, refKey: refKey);
+        ? await appNavigator.pushReplacement(context, builder, routeRefKey: routeRefKey)
+        : await appNavigator.push(context, builder, routeRefKey: routeRefKey);
 
     var flashResult = AvesNavigator.flashResult();
     if (flashResult != null) {
-      sysLog.i('popUntil page(refKey: $refKey) with result: $flashResult');
+      sysLog.i('popUntil page(routeRefKey: $routeRefKey) with result: $flashResult');
       return flashResult;
     }
 
@@ -208,7 +208,7 @@ class AvesRouterFacade {
 class UntilPredicate {
   static RoutePredicate root() => (Route<dynamic> route) => route.isFirst;
 
-  static RoutePredicate checkPoint(Key key) {
+  static RoutePredicate routeRefKey(Key key) {
     var match = false;
     return (Route<dynamic> route) {
       if (route.isFirst) return true;
@@ -220,16 +220,16 @@ class UntilPredicate {
 }
 
 class NavigatorResult {
-  final Key? refKey;
+  final Key? resultRefKey;
   late final Object? data;
 
   NavigatorResult({
-    this.refKey,
+    this.resultRefKey,
     this.data,
   });
 
   @override
   String toString() {
-    return 'NavigatorResult{refKey: $refKey, data: $data}';
+    return 'NavigatorResult{resultRefKey: $resultRefKey, data: $data}';
   }
 }

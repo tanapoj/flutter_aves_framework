@@ -5,6 +5,7 @@ import '../command.dart';
 import '../io/printer.dart';
 import 'build.dart';
 import 'init.dart';
+import 'init_config.dart';
 import 'make_logic.dart';
 import 'make_model.dart';
 import 'make_page.dart';
@@ -22,6 +23,14 @@ abstract class Action {
 
 Future<Map> getProjectYaml() async {
   File f = File('pubspec.yaml');
+  String text = await f.readAsString();
+  Map yaml = loadYaml(text);
+  return yaml;
+}
+
+Future<Map> getAvesConfigYaml() async {
+  File f = File('.aves/aves_config.yaml');
+  if (!f.existsSync()) return {};
   String text = await f.readAsString();
   Map yaml = loadYaml(text);
   return yaml;
@@ -59,15 +68,13 @@ class TemplateInfo {
 
 /// Help Text
 
-Future<String> welcomeText() async {
+Future<String> welcomeText({required bool useFvm}) async {
   String flutterInfo = '';
-  bool useFvm = false;
 
-  try {
+  if (useFvm) {
     var r = await Process.run('fvm', ['flutter', '--version']);
     flutterInfo = r.stdout;
-    useFvm = true;
-  } catch (e) {
+  } else {
     var r = await Process.run('flutter', ['--version']);
     flutterInfo = r.stdout;
   }
@@ -80,21 +87,23 @@ Usage:
     
 All commands:
   ${printer.yellow('initial')}
-    ${printer.green('init')} [${printer.blue('--dir')} lib] [${printer.blue('--overwrite')}]
+    ${printer.green('init')} [${printer.blue('--dir')} lib] [${printer.blue('--overwrite')}] [${printer.blue('--dry')}]
+    ${printer.green('init:config')} [${printer.blue('--overwrite')}] [${printer.blue('--dry')}] [${printer.blue('--use-fvm')}]
   ${printer.yellow('build_runner')}
     ${printer.green('build')}
     ${printer.green('build:model')}
     ${printer.green('build:injectable')}
   ${printer.yellow('make')}
-    ${printer.green('make:page')}  page_name  [${printer.blue('--dir')} lib/ui/pages] [${printer.blue('--overwrite')}] [${printer.blue('--dry')}] [${printer.blue('--blank')}]
-    ${printer.green('make:logic')} logic_name [${printer.blue('--dir')} lib/ui/pages] [${printer.blue('--overwrite')}] [${printer.blue('--dry')}] [${printer.blue('--blank')}]
-    ${printer.green('make:view')}  view_name  [${printer.blue('--dir')} lib/ui/pages] [${printer.blue('--overwrite')}] [${printer.blue('--dry')}] [${printer.blue('--blank')}]
-    ${printer.green('make:model')} page_name  [${printer.blue('--dir')} lib/model] [${printer.blue('--overwrite')}] [${printer.blue('--dry')}] [${printer.blue('--no-prefix')}]
+    ${printer.green('make:page')}  page_name   [${printer.blue('--dir')} lib/ui/pages] [${printer.blue('--overwrite')}] [${printer.blue('--dry')}] [${printer.blue('--blank')}]
+    ${printer.green('make:logic')} logic_name  [${printer.blue('--dir')} lib/ui/pages] [${printer.blue('--overwrite')}] [${printer.blue('--dry')}] [${printer.blue('--blank')}]
+    ${printer.green('make:view')}  view_name   [${printer.blue('--dir')} lib/ui/pages] [${printer.blue('--overwrite')}] [${printer.blue('--dry')}] [${printer.blue('--blank')}]
+    ${printer.green('make:model')} model_name  [${printer.blue('--dir')} lib/model]    [${printer.blue('--overwrite')}] [${printer.blue('--dry')}] [${printer.blue('--no-prefix')}]
 """;
 }
 
 List<Action> allActions = [
   InitAction(),
+  InitConfigAction(),
   BuildAction(),
   MakePageAction(),
   MakeLogicAction(),

@@ -175,29 +175,3 @@ RequestInterceptor useJustJson({
         ));
   });
 }
-
-RequestInterceptor useMockData({
-  required String fileName,
-  required Environment env,
-  Duration? responseTime,
-  int statusCode = 200,
-}) {
-  if (!env.isUsingNetworkMockData) {
-    return useNothing();
-  }
-  int randInt(int from, int to) => Random().nextInt(to - from + 1) + from;
-  responseTime ??= Duration(milliseconds: randInt(200, 800));
-  return RequestInterceptor(interceptor: (Request request) async {
-    if (responseTime!.isNegative == false) {
-      await Future.delayed(responseTime);
-    }
-    final content = await rootBundle.loadString(fileName);
-    var m = jsonDecode(content);
-    return RequestInterceptorFlow(request, true,
-        response: Response(
-          statusCode: statusCode,
-          data: m,
-          body: content,
-        ));
-  });
-}

@@ -1,5 +1,9 @@
+# Aves Configuration
+# you can delete this file
+# or use command `flutter pub run aves init:config` to generate new one
+
 # main command for run flutter: 'flutter' or 'fvm'
-engine: fvm
+command: fvm
 
 # 'none', 'overwrite'
 delete-conflicting-outputs: none
