@@ -97,7 +97,7 @@ All commands:
     ${printer.green('make:page')}  page_name   [${printer.blue('--dir')} lib/ui/pages] [${printer.blue('--overwrite')}] [${printer.blue('--dry')}] [${printer.blue('--blank')}]
     ${printer.green('make:logic')} logic_name  [${printer.blue('--dir')} lib/ui/pages] [${printer.blue('--overwrite')}] [${printer.blue('--dry')}] [${printer.blue('--blank')}]
     ${printer.green('make:view')}  view_name   [${printer.blue('--dir')} lib/ui/pages] [${printer.blue('--overwrite')}] [${printer.blue('--dry')}] [${printer.blue('--blank')}]
-    ${printer.green('make:model')} model_name  [${printer.blue('--dir')} lib/model]    [${printer.blue('--overwrite')}] [${printer.blue('--dry')}] [${printer.blue('--no-prefix')}]
+    ${printer.green('make:model')} model_name  [${printer.blue('--dir')} lib/model]    [${printer.blue('--overwrite')}] [${printer.blue('--dry')}] [${printer.blue('--no-suffix')}]
 """;
 }
 

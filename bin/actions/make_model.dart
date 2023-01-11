@@ -39,7 +39,7 @@ class MakeModelAction extends Action {
   @override
   exec(Command input) async {
     var outputDirectory = input.arguments['--dir'] ?? 'lib/model';
-    var noPrefixModel = input.arguments.containsKey('--no-prefix');
+    var noSuffixModel = input.arguments.containsKey('--no-suffix');
     var overwrite = input.arguments.containsKey('--overwrite');
     var dry = input.arguments.containsKey('--dry');
 
@@ -55,7 +55,7 @@ class MakeModelAction extends Action {
     var nameSnakeCase = rc.snakeCase;
     var nameCamelCase = rc.camelCase.toCapitalize();
 
-    var finalNameCamelCase = noPrefixModel ? nameCamelCase : '${nameCamelCase}Model';
+    var finalNameCamelCase = noSuffixModel ? nameCamelCase : '${nameCamelCase}Model';
 
     var outputPath = paths.join('/');
     var outputFile = '$outputDirectory${outputPath.isEmpty ? '' : '$outputPath/'}$nameSnakeCase.dart';

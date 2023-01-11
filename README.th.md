@@ -14,12 +14,13 @@ Aves เป็นเฟรมเวิร์คสำหรับสร้าง
 
 - BLoC and MVVM Pattern
 - Networking
-- UI and Theming
 - Localization (ระบบหลายภาษา)
 - Environment
+- Logging
 - Page-based State Management
+- UI and Theming
 
-### Getting Started
+## Getting Started
 
 การติดตั้ง [https://pub.dev/packages/aves/install](https://pub.dev/packages/aves/install)
 
@@ -32,9 +33,15 @@ dependencies:
 
 จากนั้นให้รันคำสั่ง `aves init` เพื่อสร้างไฟล์สำคัญสำหรับโปรเจค (ดูหัวข้อ [CLI](#cli))
 
+### Flutter Version Management
+ถ้าใช้ **fvm** ([https://fvm.app](https://fvm.app)) สามารถตั้งค่า config ให้ Aves รันคำสั่ง `flutter` ด้วย `fvm` ได้โดยใช้คำสั่ง
+```
+fvm flutter pub run aves init:config --use-fvm
+```
+
 ## CLI
 
-คำสั่งเพื่อแสดง cli ทั้งหมด
+คำสั่งเพื่อแสดง cli ทั้งหมด (help)
 
 ```
 fvm flutter pub run aves
@@ -47,6 +54,10 @@ fvm flutter pub run aves
 ```
 fvm flutter pub run aves init
 ```
+flag
+- `--dir`: กำหนดว่าจะสร้างโปรเจคที่ directory ไหน (default: `lib`)
+- `--overwrite`: ถ้าต้องการให้เขียนไฟล์ทับไฟล์เดิม
+- `--dry`: ถ้าต้องการทดสอบรัน ว่า cli จะสร้างไฟล์อะไรบ้างโดนไม่ต้องการให้สร้างไฟล์จริง
 
 คำสั่งเพื่อรัน build_runner (ไฟล์ที่ต้องใช้การ generate)
 
@@ -55,15 +66,25 @@ fvm flutter pub run aves build
 fvm flutter pub run aves build:model
 fvm flutter pub run aves build:injectable
 ```
+flag
+- `--overwrite`: ถ้าต้องการให้เขียนไฟล์ทับไฟล์เดิม
 
 การสร้างไฟล์
 
 ```
-fvm flutter pub run aves make:page
-fvm flutter pub run aves make:logic
-fvm flutter pub run aves make:view
-fvm flutter pub run aves make:model
+fvm flutter pub run aves make:page  ชื่อเพจ
+fvm flutter pub run aves make:logic ชื่อโลจิค
+fvm flutter pub run aves make:view  ชื่อวิว
+fvm flutter pub run aves make:model ชื่อโมเดล
 ```
+flag
+- `--dir`: กำหนดว่าจะสร้างโปรเจคที่ directory ไหน (default: `lib/ui/pages` ยกเว้น model จะอยู่ที่ `lib/model`)
+- `--overwrite`: ถ้าต้องการให้เขียนไฟล์ทับไฟล์เดิม
+- `--dry`: ถ้าต้องการทดสอบรัน ว่า cli 
+- `--blank`: สร้างไฟล์ด้วย template ที่ใช้โค้ดดขั้นต่ำที่สุด (ไม่มีตัวอย่างโค้ด)
+- `--no-suffix`: ใช้สำหรับโมเดล ไม่ต้องการเติม suffix คำว่า `Model` ต่อท้าย
+
+
 
 ## Project Structure
 
@@ -134,13 +155,9 @@ class MyPageLogic extends ComponentLogic {
     required Widget Function(ComponentLogic) builder,
   }) : super(key: key, builder: builder);
 
-  factory MyPageLogic.build(String label) {
+  factory MyPageLogic.build() {
     return MyPageLogic(
-      builder: (bloc) =>
-          MyPageView(
-            logic: bloc as MyPageLogic,
-            label: label,
-          ),
+      builder: (bloc) => MyPageView(logic: bloc as MyPageLogic),
     );
   }
 
@@ -208,70 +225,109 @@ class MyPageView extends View<MyPageLogic> {
 
 ## Routing
 
+สามารถใช้ build-in helper `router` ในการสั่งเปลี่ยนหน้าเพจได้
+
+เปลี่ยนหน้าเพจจาก MyPage ไป NextPage
 ```dart
 class MyPageLogic extends ComponentLogic {
   _navigateNextPage() {
-    nav.push(context!, NextPage.build());
+    router.push(NextPageLogic.build());
   }
 }
 ```
 
+กดกลับจากหน้า NextPage กลับมายัง MyPage
 ```dart
-class MyPageView extends View<MyPageLogic> {
-  _navigateNextPage() {
-    nav.push(context!, NextPage.build());
+class NextPageLogic extends ComponentLogic {
+  _navigateBack() {
+    router.pop();
   }
 }
 ```
 
-### Routing with Result
+## Routing with Result
 
-การส่งข้อมูลระหว่างหน้า สามารถทำได้โดยเพิ่ม parameter ในฟังก์ชัน `build` และ constructor ได้เลย
+หากต้องการส่งข้อมูลกลับไปหน้าก่อน สามารถสร้างได้ผ่านการใช้ NavigatorResult ซึ่งจะประกอบด้วย
+- `resultRefKey`: ref สำหรับเช็กว่า result เป็นตัวที่ตรงกันหรือไม่ (เช่นหน้าเพจอาจจะส่งข้อมูลกลับได้หลายรูปแบบ หรือโดนเรียกจากหลายหน้า)
+- `data`:  ข้อมูลที่ต้องการส่งกลับ (เป็น dynamic ดังนั้นหลังจากได้รับข้อมูลแล้วจะต้องทำการ type casing เอง)
 
 ```dart
-class APage extends ComponentLogic {
-  _navigateToB() async {
-    NavigatorResult result = await nav.push(context!, BPage.build(
-      label: 'Test Label',
-    ));
-    
-    if(result.code == 123) {
-      appLog.d('x is ${result['x']}');
+class MyPageLogic extends ComponentLogic {
+  _navigateNextPage() async {
+    NavigatorResult result = await router.push(
+        NextPageLogic.build(),
+    );
+
+    if (result.resultRefCode == ValueKey('res-1')) {
+        int ans = result.data as int;
     }
   }
 }
-```
 
-ส่วนการส่งข้อมูลมาหน้าต้นทาง สามารถส่งผ่านคำสั่ง `pop` โดยสร้าง `NavigatorResult` ขึ้นมา
-
-```dart
-class BPage extends ComponentLogic {
-  
-  final String label;
-  
-  BPage({
-    Key? key,
-    required this.label,
-    required Widget Function(ComponentLogic) builder,
-  }) : super(key: key, builder: builder);
-
-  factory BPage.build(String label) {
-    return BPage(
-      label: label,
-      // other fields ...
+class NextPageLogic extends ComponentLogic {
+  _navigateBack() {
+    int ans = 123;
+    router.pop(
+        result: NavigatorResult(
+            resultRefCode: ValueKey('res-1'),
+            data: ans,
+        ),
     );
-  }
-  
-  _navigateBackToA() {
-    nav.pop(context!, result: NavigatorResult(
-      code: 123,
-      data: {
-        'x': 1,
-      },
-    ));
   }
 }
 ```
+
+
+## Routing pop until
+
+สามารถใช้ `until` เวลา pop สำหรับเลือกว่าจะทำการ pop กลับไปถึงหน้าไหน
+
+ซึ่งสามารถกำหนด name หรือ `routeRefKey` ในหน้าต้นทางได้
+
+เช่น ในกรณีนี้ ต้องการกดจากหน้าเพจ A -> B -> C และในหน้า C ต้องการส่งข้อมูลกลับไปยังหน้า A เลย (pop ข้ามหน้า B ไปเลย)
+
+ขั้นต้องแรกจะต้องประกาศ routeRefKey ในหน้า A ตอนที่สั่ง `push` แล้วในหน้า C ที่ต้องการ pop กลับไปยังหน้า A (อาจจะแนบ result กลับไปด้วยก็ได้) ก็จะใช้ until
+
+```dart
+class A extends ComponentLogic {
+  _navigateB() async {
+    NavigatorResult result = await router.push(
+        NextPageLogic.build(),
+        routeRefKey: ValueKey('page-a'),
+    );
+
+    if (result.resultRefCode == ValueKey('res-1')) {
+        int ans = result.data as int;
+    }
+  }
+}
+
+class B extends ComponentLogic {
+    ...
+}
+
+class C extends ComponentLogic {
+  _navigateBackToA() {
+    int ans = 123;
+    router.pop(
+        result: NavigatorResult(
+            resultRefCode: ValueKey('res-1'),
+            data: ans,
+        ),
+        until: UntilPredecate.routeRefKey(ValueKey('page-a')),
+    );
+  }
+}
+```
+
+> ถ้ามีการสั่ง push แต่ไม่ได้ตั้งค่า `routeRefKey` router จะใช้ `name` ของ Logic เป็นค่าแทน
+
+การใช้ until สามารถเลือกได้ว่าจะ pop จนถึง root เลยหรือว่า routeRefKey ที่ตรงกับที่กำหนด (ถ้าไม่เจอเลย จะหยุดแค่ root)
+```dart
+UntilPredecate.root()
+UntilPredecate.routeRefKey(key)
+```
+
 
 ## Networking
 

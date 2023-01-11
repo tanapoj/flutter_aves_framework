@@ -31,9 +31,9 @@ class InitConfigAction extends Action {
 
     try {
       printer.writeln(printer.blue('[i] generate config file'));
-      String prefix = '${printer.blue('    create file:')} ';
+      String suffix = '${printer.blue('    create file:')} ';
 
-      printer.writeln('$prefix ${await _createFile(
+      printer.writeln('$suffix ${await _createFile(
         outputDir: '.aves',
         outputFile: 'aves_config.yaml',
         template: 'init/.aves/aves_config.yaml',
