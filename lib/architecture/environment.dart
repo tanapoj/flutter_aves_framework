@@ -19,4 +19,12 @@ abstract class Environment {
   bool get isDebugMode {
     return true;
   }
+
+  bool get isLogging {
+    return true;
+  }
+
+  bool get isSystemLogging {
+    return true;
+  }
 }

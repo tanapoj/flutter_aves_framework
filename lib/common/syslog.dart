@@ -1,4 +1,5 @@
 import 'package:aves/common/log.dart';
+import 'package:aves_support/common/extension/string.dart';
 import 'package:flutter/foundation.dart';
 import 'package:logger/logger.dart' as leisim;
 
@@ -17,21 +18,36 @@ class SysLogger extends Logger {
     // TODO: implement close
   }
 
+  _printMultiLine(String output, {String suffix = ''}) {
+    if (provider?.env.isLogging == false) return;
+    // AppDatabase db = inject<AppDatabase>().db;
+    // db.appLogDao.insertLog(AppLogEntity(1, 'logType', 'message')).then((value) => null);
+
+    var cs = output.chunk(1000);
+    if (cs.isNotEmpty && cs.last.length + suffix.length <= 1000) {
+      cs[cs.length - 1] = '${cs[cs.length - 1]}$suffix';
+    } else {
+      cs.add(suffix);
+    }
+
+    cs.forEach(print);
+  }
+
   @override
   void v(message, [error, StackTrace? stackTrace]) {
     if (level.index >= leisim.Level.verbose.index && kDebugMode) {
-      print('${black('[v]')} $message');
+      _printMultiLine('${black('[v]')} $message');
     }
   }
 
   @override
   void d(message, [error, StackTrace? stackTrace]) {
-    print('${blue('sysd')} $message');
+    _printMultiLine('${blue('sysd')} $message');
   }
 
   @override
   void i(message, [error, StackTrace? stackTrace]) {
-    print('${blue('sysi')} $message');
+    _printMultiLine('${blue('sysi')} $message');
   }
 
   @override
@@ -48,7 +64,7 @@ class SysLogger extends Logger {
 
     String stackTrace = stackTraceLine.isNotEmpty ? stackTraceLine[1] : '';
 
-    print(yellow('\n'
+    _printMultiLine(yellow('\n'
         '=== WARNING ============================'
         '\n'
         '[w] $message'
@@ -72,7 +88,7 @@ class SysLogger extends Logger {
 
     String stackTrace = stackTraceLine.map((line) => '    $line').join('\n');
 
-    print(red('\n'
+    _printMultiLine(red('\n'
         '=== ERROR =============================='
         '\n'
         '[e] $message'
@@ -85,7 +101,7 @@ class SysLogger extends Logger {
 
   @override
   void log(leisim.Level level, message, [error, StackTrace? stackTrace]) {
-    print(message);
+    _printMultiLine(message);
   }
 
   @override

@@ -177,9 +177,11 @@ class AvesRouterFacade {
 
   Future<NavigatorResult> push(
     Widget Function(BuildContext context) builder, {
+    BuildContext? context,
     Key? routeRefKey,
     bool replacement = false,
   }) async {
+    context ??= this.context;
     routeRefKey ??= ValueKey(routeRefName);
 
     NavigatorResult result = replacement
@@ -196,9 +198,11 @@ class AvesRouterFacade {
   }
 
   AvesNavigator pop<T extends Object?>({
+    BuildContext? context,
     NavigatorResult? result,
     RoutePredicate? until,
   }) {
+    context ??= this.context;
     return until != null
         ? appNavigator.popUntil(context, until, result: result)
         : appNavigator.pop(context, result: result);

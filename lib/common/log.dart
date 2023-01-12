@@ -1,7 +1,4 @@
-import 'package:aves/architecture/di.dart';
-import 'package:aves/common/syslog.dart';
-import 'package:aves/data/db/database.dart';
-import 'package:aves/data/db/entities/app_log.entity.dart';
+import 'package:aves/architecture/provider.dart';
 import 'package:aves_support/common/extension/string.dart';
 import 'package:flutter/foundation.dart';
 import 'package:logger/logger.dart' as leisim;
@@ -27,8 +24,14 @@ class Logger implements leisim.Logger {
     // TODO: implement close
   }
 
-  _printMultiLine(String output, {String suffix = ''}) {
+  AvesProvider? provider;
 
+  setControlProvider(AvesProvider provider) {
+    this.provider = provider;
+  }
+
+  _printMultiLine(String output, {String suffix = ''}) {
+    if (provider?.env.isLogging == false) return;
     // AppDatabase db = inject<AppDatabase>().db;
     // db.appLogDao.insertLog(AppLogEntity(1, 'logType', 'message')).then((value) => null);
 
