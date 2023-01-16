@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:aves/common/syslog.dart';
 import 'package:aves/architecture/component/periodic_lifecycle_event.dart';
 import 'package:aves/architecture/component/subscribe_lifecycle_event.dart';
+import 'package:aves/architecture/component/subscribe_stream_event.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_live_data/index.dart' as fld;
 import 'legacy/index.dart' as legacy;
@@ -13,6 +14,7 @@ abstract class Logic<T> extends legacy.ComponentLogic {
   final bool _logging;
 
   final SubscribeLifeCycleEvent _subscribeLifeCycleEvent = SubscribeLifeCycleEvent();
+  final SubscribeStreamEvent _subscribeStreamEvent = SubscribeStreamEvent();
   final PeriodicLifeCycleEvent _periodicLifeCycleEvent = PeriodicLifeCycleEvent();
 
   Logic({
@@ -26,6 +28,7 @@ abstract class Logic<T> extends legacy.ComponentLogic {
         ) {
     _selfLog('construct');
     _subscribeLifeCycleEvent.onCtor();
+    _subscribeStreamEvent.onCtor();
     _periodicLifeCycleEvent.onCtor();
   }
 
@@ -37,13 +40,32 @@ abstract class Logic<T> extends legacy.ComponentLogic {
     }
   }
 
-  subscribe<T>(
-    fld.LiveData<T>? liveData,
-    void Function(T value) onData,
-  ) {
-    if (liveData == null) return;
+  StreamSubscription<E>? subscribeStream<E>(
+    Stream<E>? stream,
+    void Function(E value) onData, {
+    Function? onError,
+    void Function()? onDone,
+    bool? cancelOnError,
+  }) {
+    if (stream == null) return null;
     if (attr.isInitializingState) {
-      sysLog.w('call [subscribe] inside method onInit (initState) cause abnormal behavior when Hot-Reload'
+      sysLog.w('call [subscribeStream] inside method onInit (initState) cause abnormal behavior when Hot-Reload'
+          ' --> '
+          'move code to onCreate');
+    }
+    return _subscribeStreamEvent.call(stream, onData);
+  }
+
+  StreamSubscription<E>? subscribeLiveData<E>(
+    fld.LiveData<E>? liveData,
+    void Function(E value) onData, {
+    void Function()? onDone,
+    Function? onError,
+    bool? cancelOnError,
+  }) {
+    if (liveData == null) return null;
+    if (attr.isInitializingState) {
+      sysLog.w('call [subscribeLiveData] inside method onInit (initState) cause abnormal behavior when Hot-Reload'
           ' --> '
           'move code to onCreate');
     }
@@ -74,6 +96,7 @@ abstract class Logic<T> extends legacy.ComponentLogic {
     _selfLog('onInit');
     super.onInit();
     _subscribeLifeCycleEvent.onInit();
+    _subscribeStreamEvent.onInit();
     _periodicLifeCycleEvent.onInit();
   }
 
@@ -82,12 +105,14 @@ abstract class Logic<T> extends legacy.ComponentLogic {
     _selfLog('onResume');
     super.onResume();
     _subscribeLifeCycleEvent.onResume();
+    _subscribeStreamEvent.onResume();
     _periodicLifeCycleEvent.onResume();
   }
 
   @override
   void onDispose() {
     _subscribeLifeCycleEvent.onDispose();
+    _subscribeStreamEvent.onDispose();
     _periodicLifeCycleEvent.onDispose();
     super.onDispose();
     _selfLog('onDispose');
@@ -96,6 +121,7 @@ abstract class Logic<T> extends legacy.ComponentLogic {
   @override
   onPause() {
     _subscribeLifeCycleEvent.onPause();
+    _subscribeStreamEvent.onPause();
     _periodicLifeCycleEvent.onPause();
     super.onPause();
     _selfLog('onPause');

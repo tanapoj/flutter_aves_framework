@@ -1,22 +1,22 @@
 import 'dart:async';
 import 'package:flutter_live_data/index.dart' as fld;
 
-class SubscribeLifeCycleEvent {
+class SubscribeStreamEvent {
   final List<dynamic> streamSubscription = [];
 
   StreamSubscription<T> call<T>(
-    fld.LiveData<T> liveData,
+    Stream<T> stream,
     void Function(T value) onData, {
-    void Function()? onDone,
     Function? onError,
+    void Function()? onDone,
     bool? cancelOnError,
   }) {
-    StreamSubscription<T> ss = liveData.listen(
+    StreamSubscription<T> ss = stream.listen(
       onData,
-      onDone: onDone,
       onError: onError,
+      onDone: onDone,
       cancelOnError: cancelOnError,
-    )!;
+    );
     streamSubscription.add(ss);
     return ss;
   }

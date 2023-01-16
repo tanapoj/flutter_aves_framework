@@ -19,7 +19,7 @@ class SysLogger extends Logger {
   }
 
   _printMultiLine(String output, {String suffix = ''}) {
-    if (provider?.env.isLogging == false) return;
+    if (provider?.env.isSystemLogging == false) return;
     // AppDatabase db = inject<AppDatabase>().db;
     // db.appLogDao.insertLog(AppLogEntity(1, 'logType', 'message')).then((value) => null);
 
