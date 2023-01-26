@@ -18,6 +18,26 @@ class Request<Success> {
 
   RequestBody? body;
   Map<String, dynamic> headers = {};
+  Map<String, dynamic> queryParameter = {};
+  List<Map<String, dynamic>> queryParameters = [];
+
+  String get queryParametersString {
+    final urlQueryParameters = queryParameter.isNotEmpty ? [...queryParameters, queryParameter] : queryParameters;
+    Map<String, List<String>> qs = {};
+
+    for (final each in urlQueryParameters) {
+      for (final entry in each.entries) {
+        if (!qs.containsKey(entry.key)) qs[entry.key] = [];
+        qs[entry.key]?.add(entry.value);
+      }
+    }
+
+    var queryParamsString = Uri(queryParameters: qs).toString();
+    if (queryParamsString.isNotEmpty && queryParamsString[0] == '?') {
+      queryParamsString = queryParamsString.substring(1);
+    }
+    return queryParamsString;
+  }
 
   @override
   String toString() {
@@ -126,6 +146,11 @@ class RequestBodyJson extends RequestBody {
   final Map<String, dynamic> body;
 
   RequestBodyJson(this.body);
+
+  @override
+  String toString() {
+    return 'RequestBodyJson{$body}';
+  }
 }
 
 class RequestInterceptor<T> {

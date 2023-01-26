@@ -13,11 +13,11 @@
 Aves เป็นเฟรมเวิร์คสำหรับสร้าง Flutter Application
 
 - BLoC and MVVM Pattern
+- Page-based State Management
 - Networking
 - Localization (ระบบหลายภาษา)
 - Environment
 - Logging
-- Page-based State Management
 - UI and Theming
 
 ## Getting Started

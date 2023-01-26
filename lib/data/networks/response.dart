@@ -1,8 +1,8 @@
 import 'dart:convert';
 
-class Response<Success> {
+class Response<D> {
   final String message;
-  final Success? data;
+  final D? data;
   final String? body;
   final int statusCode;
   final Map<String, List<String>>? headers;
@@ -70,11 +70,25 @@ class ResponseInterceptor<T> {
 class ResponseInterceptorFlow<T> {
   final Response response;
   final bool terminate;
+  final bool startAgain;
 
-  ResponseInterceptorFlow(this.response, this.terminate);
+  ResponseInterceptorFlow(this.response, this.terminate, {this.startAgain = false});
 }
 
 ResponseInterceptor useUnpackJSend() {
+  return ResponseInterceptor(interceptor: (Response response) async {
+    var data = response.data is String ? jsonDecode(response.data) : response.data;
+    return ResponseInterceptorFlow(
+        Response<Map<String, dynamic>>(
+          data: data['payload'],
+          body: response.body,
+          statusCode: response.statusCode,
+        ),
+        false);
+  });
+}
+
+ResponseInterceptor useTest() {
   return ResponseInterceptor(interceptor: (Response response) async {
     var data = response.data is String ? jsonDecode(response.data) : response.data;
     return ResponseInterceptorFlow(
