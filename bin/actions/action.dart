@@ -3,7 +3,7 @@ import 'package:yaml/yaml.dart';
 
 import '../command.dart';
 import '../io/printer.dart';
-import 'build.dart';
+import 'generate.dart';
 import 'init.dart';
 import 'init_config.dart';
 import 'make_logic.dart';
@@ -90,9 +90,9 @@ All commands:
     ${printer.green('init')} [${printer.blue('--dir')} lib] [${printer.blue('--overwrite')}] [${printer.blue('--dry')}]
     ${printer.green('init:config')} [${printer.blue('--overwrite')}] [${printer.blue('--dry')}] [${printer.blue('--use-fvm')}]
   ${printer.yellow('build_runner')}
-    ${printer.green('build')}
-    ${printer.green('build:model')}
-    ${printer.green('build:injectable')}
+    ${printer.green('generate')}
+    ${printer.green('generate:model')}
+    ${printer.green('generate:injectable')}
   ${printer.yellow('make')}
     ${printer.green('make:page')}  page_name   [${printer.blue('--dir')} lib/ui/pages] [${printer.blue('--overwrite')}] [${printer.blue('--dry')}] [${printer.blue('--blank')}]
     ${printer.green('make:logic')} logic_name  [${printer.blue('--dir')} lib/ui/pages] [${printer.blue('--overwrite')}] [${printer.blue('--dry')}] [${printer.blue('--blank')}]
@@ -104,7 +104,7 @@ All commands:
 List<Action> allActions = [
   InitAction(),
   InitConfigAction(),
-  BuildAction(),
+  GenerateAction(),
   MakePageAction(),
   MakeLogicAction(),
   MakeViewAction(),

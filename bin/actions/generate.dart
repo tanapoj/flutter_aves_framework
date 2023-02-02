@@ -1,23 +1,18 @@
 import 'dart:io';
 
-import 'package:aves_support/common/extension/list.dart';
-import 'package:aves_support/common/extension/string.dart';
-import 'package:recase/recase.dart';
-
 import '../command.dart';
 import '../io/printer.dart';
-import '../io/template.dart';
 import 'action.dart';
 
-class BuildAction extends Action {
+class GenerateAction extends Action {
   @override
-  String get name => 'build';
+  String get name => 'generate';
 
   @override
   bool checkCanExecCmd(Command input) {
-    if (input.cmd == 'build') return true;
-    if (input.cmd == 'build:model') return true;
-    if (input.cmd == 'build:injectable') return true;
+    if (input.cmd == 'generate') return true;
+    if (input.cmd == 'generate:model') return true;
+    if (input.cmd == 'generate:injectable') return true;
     return false;
   }
 

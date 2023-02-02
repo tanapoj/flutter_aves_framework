@@ -1,6 +1,6 @@
 name: aves
 description: Aves Framework
-version: 0.0.26
+version: 0.0.28
 homepage: https://github.com/tanapoj/aves
 
 environment:
@@ -11,7 +11,7 @@ dependencies:
   flutter:
     sdk: flutter
 
-  aves_support: ^0.0.7
+  aves_support: ^0.0.8
   flutter_live_data: ^2.1.5
   bloc_builder: ^2.2.1
   mvvm_bloc: ^2.2.0

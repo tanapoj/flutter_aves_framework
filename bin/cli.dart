@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:aves_support/common/extension/list.dart';
+import 'package:aves/common/extension/list.dart';
 import 'actions/action.dart';
 import 'command.dart';
 import 'io/printer.dart';

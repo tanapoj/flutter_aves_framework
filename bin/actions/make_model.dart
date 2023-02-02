@@ -1,5 +1,5 @@
-import 'package:aves_support/common/extension/list.dart';
-import 'package:aves_support/common/extension/string.dart';
+import 'package:aves/common/extension/list.dart';
+import 'package:aves/common/extension/string.dart';
 import 'package:recase/recase.dart';
 
 import '../command.dart';

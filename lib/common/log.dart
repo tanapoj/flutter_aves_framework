@@ -1,5 +1,5 @@
 import 'package:aves/architecture/provider.dart';
-import 'package:aves_support/common/extension/string.dart';
+import 'package:aves/common/extension/string.dart';
 import 'package:flutter/foundation.dart';
 import 'package:logger/logger.dart' as leisim;
 

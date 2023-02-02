@@ -29,6 +29,10 @@ Aves เป็นเฟรมเวิร์คสำหรับสร้าง
 ```
 dependencies:
   aves: {{version}}
+
+dev_dependencies:
+  build_runner: any
+  json_serializable: ^6.5.4
 ```
 
 จากนั้นให้รันคำสั่ง `aves init` เพื่อสร้างไฟล์สำคัญสำหรับโปรเจค (ดูหัวข้อ [CLI](#cli))
@@ -62,9 +66,9 @@ flag
 คำสั่งเพื่อรัน build_runner (ไฟล์ที่ต้องใช้การ generate)
 
 ```
-fvm flutter pub run aves build
-fvm flutter pub run aves build:model
-fvm flutter pub run aves build:injectable
+fvm flutter pub run aves generate
+fvm flutter pub run aves generate:model
+fvm flutter pub run aves generate:injectable
 ```
 flag
 - `--overwrite`: ถ้าต้องการให้เขียนไฟล์ทับไฟล์เดิม
@@ -84,6 +88,7 @@ flag
 - `--blank`: สร้างไฟล์ด้วย template ที่ใช้โค้ดดขั้นต่ำที่สุด (ไม่มีตัวอย่างโค้ด)
 - `--no-suffix`: ใช้สำหรับโมเดล ไม่ต้องการเติม suffix คำว่า `Model` ต่อท้าย
 
+> การสร้าง directory, filename จะใช้ snake_case เสมอ และชื่อคลาสจะใช้ camelCase เสมอ (ถ้าใส่ case อื่นมา CLI จะทำการ convert เป็น snake, camel ให้ทันที)
 
 
 ## Project Structure
@@ -96,12 +101,25 @@ flag
 |   |   |-- app_navigator.dart
 |   |   |-- app_provider.dart
 |   |   |-- app_translator.dart
+|   |   |-- app_ui.dart
 |   |   '-- environment.dart
 |   |-- common
+|   |   |-- extension
 |   |   '-- helpers.dart
 |   |-- config
+|   |   |-- env
+|   |   |-- lang
+|   |   |-- assets.dart
+|   |   |-- di.dart
+|   |   |-- global_var.dart
+|   |   '-- startup.dart
 |   |-- data
+|   |   |-- network
+|   |   |-- db
+|   |   '-- preference
 |   |-- model
+|   |   |-- api
+|   |   |-- local
 |   |-- ui
 |   |   |-- main
 |   |   |-- pages
@@ -131,7 +149,7 @@ flag
 |          |
 |   Logic <----> Service <-+-> NetworkApi
 |    |     |               |-> Database
-|   View   |               |-> Preference
+|   View   |               '-> Preference
 |          |
 +----------+
 ```
@@ -139,7 +157,7 @@ flag
 ## Dependency Injection
 
 สำหรับ Aves ใช้ lib `injectable` ในการสร้างไฟล์สำหรับการทำ Dependency Injection ซึ่งสามารถสั่งสร้าง
-generated file ได้จาก cli:build
+generated file ได้จาก cli generate
 
 ## Page
 
@@ -331,32 +349,7 @@ UntilPredecate.routeRefKey(key)
 
 ## Networking
 
-```dart
-@injectable
-class MyNetworkApi {
-
-  Request<T> request<T>() {
-    return Request<T>.http()
-      ..method = 'GET'
-      ..baseUrl = 'https://api.myapi.co/'
-      ..url = ''
-      ..requestInterceptor = useAuthorizationBearerToken() + useMockData(fileName: 'test')
-      ..responseInterceptor = useUnpackJSend() + useReAuth()
-      ..body = RequestBodyJson({});
-  }
-
-  Request<List<MyModel>> getTestItems() {
-    return request<List<MyModel>>()
-      ..method = 'GET'
-      ..url = 'items'
-      ..mappingResponse = (dynamic body) {
-        return <MyModel>[
-          ...(jsonDecodeToIterable(body)).map((item) => MyModel.fromJson(jsonDecodeToMap(item))),
-        ];
-      };
-  }
-}
-```
+อ่านต่อที่ network
 
 ```dart
 @injectable
