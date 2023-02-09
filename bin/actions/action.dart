@@ -87,7 +87,7 @@ Usage:
     
 All commands:
   ${printer.yellow('initial')}
-    ${printer.green('init')} [${printer.blue('--dir')} lib] [${printer.blue('--overwrite')}] [${printer.blue('--dry')}]
+    ${printer.green('init')} [${printer.blue('--dir')} lib] [${printer.blue('--overwrite')}] [${printer.blue('--dry')}] [${printer.blue('--blank')}]
     ${printer.green('init:config')} [${printer.blue('--overwrite')}] [${printer.blue('--dry')}] [${printer.blue('--use-fvm')}]
   ${printer.yellow('build_runner')}
     ${printer.green('generate')}

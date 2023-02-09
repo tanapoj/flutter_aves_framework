@@ -3,6 +3,8 @@ import 'package:get_it/get_it.dart';
 class AvesDi {
   final _getIt = GetIt.I;
 
+  GetIt get getIt => _getIt;
+
   T get<T extends Object>([String? instanceName]) => _getIt.get<T>(instanceName: instanceName);
 
   void singletonFactory<T extends Object>(

@@ -28,6 +28,7 @@ class InitAction extends Action {
     var outputDirectory = input.arguments['--dir'] ?? 'lib';
     var overwrite = input.arguments.containsKey('--overwrite');
     var dry = input.arguments.containsKey('--dry');
+    var blank = input.arguments.containsKey('--blank');
 
     var dirs = [
       '$outputDirectory/app',

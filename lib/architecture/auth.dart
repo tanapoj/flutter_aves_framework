@@ -1,19 +1,20 @@
 import 'package:flutter_live_data/index.dart';
+import 'package:flutter_live_data/live_source.dart';
 
 class AvesAuth<User> {
   syncInit() {}
 
-  asyncInit() async {
-    return Future.value(null);
-  }
+  asyncInit() async {}
 
-  bool get isLogin => user != null; // || user is GuestUser;
+  bool get isLogin => $state.value != null;
 
   User? get user => $state.value;
 
-  LiveDataSource<User?> $state = LiveDataSource(
-    null, // GuestUser(),
-    dataSourceInterface: null,
+  LiveData<User?> $state = LiveSource(
+    null,
+    adapter: LiveDataSourceAdapter(
+      saveData: (value) async {},
+    ),
   );
 
   setUser(User user) {
@@ -23,10 +24,4 @@ class AvesAuth<User> {
   unsetUser() {
     $state.value = null;
   }
-}
-
-abstract class AvesUser {
-  String? serialize();
-
-  void unserialize(String? serializeString);
 }
