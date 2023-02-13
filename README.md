@@ -35,6 +35,8 @@ dependencies:
 dev_dependencies:
   build_runner: any
   json_serializable: ^6.5.4
+  slang_build_runner: any
+  injectable_generator:
 ```
 package เสริมสำหรับ framework หากต้องการใช้สามารถติดตั้งเพิ่มได้
 ```yaml
