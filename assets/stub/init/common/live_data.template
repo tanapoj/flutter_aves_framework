@@ -1,0 +1,43 @@
+/// Project: {{#projectName}}
+/// Author: {{#author}}
+/// Created at: {{#createdAt}}
+
+import 'package:flutter_live_data/live_source.dart';
+import 'package:{{#projectName}}/data/preference/app_pref.dart';
+
+class LiveSourcePref {
+  static LiveDataSourceAdapter<T> intAdapter<T>(String key, T defaultValue, {bool autoload = true}) {
+    return LiveDataSourceAdapter<T>(
+      loadData: autoload ? loadIntFactory<T>(key, defaultValue) : null,
+      saveData: saveIntFactory(key),
+    );
+  }
+
+  static Future<T> Function() loadIntFactory<T>(String key, T initValue) {
+    AppPreference pref = AppPreference();
+    return () async {
+      return (await pref.getInt(key) ?? (initValue as int)) as T;
+    };
+  }
+
+  static Future<void> Function(T value) saveIntFactory<T>(String key) {
+    AppPreference pref = AppPreference();
+    return (T value) async {
+      pref.setInt(key, value as int);
+    };
+  }
+
+  static Future<T> Function() loadStringFactory<T>(String key, T initValue) {
+    AppPreference pref = AppPreference();
+    return () async {
+      return (await pref.getString(key) ?? (initValue as String)) as T;
+    };
+  }
+
+  static Future<void> Function(T value) saveStringFactory<T>(String key) {
+    AppPreference pref = AppPreference();
+    return (T value) async {
+      pref.setString(key, value as String);
+    };
+  }
+}

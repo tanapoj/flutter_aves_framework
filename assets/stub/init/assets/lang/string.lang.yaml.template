@@ -1,0 +1,15 @@
+home_page:
+  title: "Demo"
+  loaded_data_is: "loaded data is"
+  counter_is: "counter is"
+  accumulator_is: "accumulator is"
+  increment: "increment"
+setting_page:
+  title: "Setting"
+  locale_en: "English"
+  locale_th: "Thai"
+  theme_1: "Theme I"
+  theme_2: "Theme II"
+user_page:
+  title: "User"
+loading: "loading..."

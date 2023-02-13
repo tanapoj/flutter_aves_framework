@@ -2,3 +2,137 @@
 /// Author: {{#author}}
 /// Created at: {{#createdAt}}
 
+import 'package:aves/common/log.dart';
+import 'package:injectable/injectable.dart' as di;
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:{{#projectName}}/config/lang/translations.g.dart';
+import 'package:{{#projectName}}/config/theme/theme1.dart';
+import 'package:{{#projectName}}/config/theme/theme2.dart';
+import 'package:{{#projectName}}/model/user.dart';
+
+@di.injectable
+class AppPreference {
+  static const String prefAppUser = 'pref-app-user';
+  static const String prefAppLocale = 'pref-app-locale';
+  static const String prefAppTheme = 'pref-app-theme';
+
+  // AppUser
+
+  Future<User?> getAppUser() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    var userData = prefs.getString(prefAppUser);
+    appLog.d('FrameworkPreference.getAppUser = $userData');
+    return userData == null ? null : User.unserialize(userData);
+  }
+
+  void setAppUser(User? user) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (user == null) {
+      prefs.remove(prefAppUser);
+    } else {
+      var userData = user.serialize();
+      appLog.d('FrameworkPreference.setAppUser = $userData');
+      prefs.setString(prefAppUser, userData);
+    }
+  }
+
+  // AppLocale
+
+  Future<AppLocale> getAppLocale() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    var langCode = prefs.getString(prefAppLocale) ?? 'en';
+    appLog.d('FrameworkPreference.getAppLocale = $langCode');
+    if (langCode == 'th') return AppLocale.th;
+    return AppLocale.en;
+  }
+
+  void setAppLocale(AppLocale locale) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? langCode;
+    if (locale == AppLocale.en) langCode = 'en';
+    if (locale == AppLocale.th) langCode = 'th';
+    appLog.d('FrameworkPreference.setAppLocale = $langCode');
+    prefs.setString(prefAppLocale, langCode ?? 'en');
+  }
+
+  // AppLocale
+
+  Future<AppTheme> getAppTheme() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String themeCode;
+    try {
+      themeCode = prefs.getString(prefAppTheme) ?? '';
+    } catch (e) {
+      themeCode = '';
+    }
+    appLog.d('FrameworkPreference.getAppTheme = $themeCode');
+    if (themeCode == '2') return AppTheme2();
+    return AppTheme();
+  }
+
+  void setAppTheme(AppTheme theme) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? themeCode;
+    if (theme is AppTheme2) themeCode = '2';
+    appLog.d('FrameworkPreference.setAppTheme = $themeCode');
+    prefs.setString(prefAppTheme, themeCode ?? '1');
+  }
+
+  // Custom
+
+  Future<int?> getInt(String key) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getInt(key);
+  }
+
+  void setInt(String key, int? value) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (value == null) {
+      prefs.remove(key);
+      return;
+    }
+    prefs.setInt(key, value);
+  }
+
+  Future<double?> getDouble(String key) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getDouble(key);
+  }
+
+  void setDouble(String key, double? value) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (value == null) {
+      prefs.remove(key);
+      return;
+    }
+    prefs.setDouble(key, value);
+  }
+
+  Future<String?> getString(String key) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString(key);
+  }
+
+  void setString(String key, String? value) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (value == null) {
+      prefs.remove(key);
+      return;
+    }
+    prefs.setString(key, value);
+  }
+
+  Future<bool?> getBool(String key) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(key);
+  }
+
+  void setBool(String key, bool? value) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (value == null) {
+      prefs.remove(key);
+      return;
+    }
+    prefs.setBool(key, value);
+  }
+}

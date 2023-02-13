@@ -1,0 +1,15 @@
+home_page:
+  title: "เดโม่"
+  loaded_data_is: "ข้อมูลที่โหลดมาคือ"
+  counter_is: "counter คือ"
+  accumulator_is: "accumulator คือ"
+  increment: "เพิ่มค่า"
+setting_page:
+  title: "หน้าตั้งค่า"
+  locale_en: "อังกฤษ"
+  locale_th: "ไทย"
+  theme_1: "ธีม ๑"
+  theme_2: "ธีม ๒"
+user_page:
+  title: "ผู้ใช้งาน"
+loading: "กำลังโหลด..."

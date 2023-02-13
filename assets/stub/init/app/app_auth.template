@@ -3,10 +3,46 @@
 /// Created at: {{#createdAt}}
 
 import 'package:aves/architecture/auth.dart';
+import 'package:aves/common/log.dart';
+import 'package:aves/index.dart';
+import 'package:flutter_live_data/live_source.dart';
+import 'package:{{#projectName}}/app/app_provider.dart';
+import 'package:{{#projectName}}/data/preference/app_pref.dart';
+import 'package:{{#projectName}}/model/user.dart';
 
-class AppAuth<User> extends AvesAuth<User> {
+class AppAuth extends AvesAuth<User> {
+  final AppPreference _pref = AppPreference();
+
+  AppAuth(App provider) {
+    $state.listen((value) {
+      provider.changeNotify();
+    });
+  }
+
+  @override
+  syncInit() {
+    ($state as LiveSource<User?>).adapter = LiveDataSourceAdapter<User?>(
+      saveData: (user) async {
+        _pref.setAppUser(user);
+      },
+    );
+  }
+
+  @override
+  asyncInit() async {
+    var user = await _pref.getAppUser();
+    if (user != null) {
+      await setUser(user);
+    } else {
+      await unsetUser();
+    }
+  }
+
   @override
   String toString() {
-    return 'AppAuth{$user}';
+    if (isLogin) {
+      return 'AppAuth{$user}';
+    }
+    return 'AppAuth{null}';
   }
 }

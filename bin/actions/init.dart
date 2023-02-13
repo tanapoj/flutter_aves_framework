@@ -31,14 +31,19 @@ class InitAction extends Action {
     var blank = input.arguments.containsKey('--blank');
 
     var dirs = [
+      'assets',
       '$outputDirectory/app',
       '$outputDirectory/common',
       '$outputDirectory/common/extension',
       '$outputDirectory/config',
+      '$outputDirectory/config/env',
+      '$outputDirectory/config/lang',
+      '$outputDirectory/config/theme',
       '$outputDirectory/data',
       '$outputDirectory/data/db',
       '$outputDirectory/data/network',
       '$outputDirectory/data/preference',
+      '$outputDirectory/data/service',
       '$outputDirectory/model',
       '$outputDirectory/model/api',
       '$outputDirectory/model/local',
@@ -64,17 +69,6 @@ class InitAction extends Action {
       String prefix = '${printer.blue('    create file:')} ';
 
       // app
-      printer.writeln('$prefix ${await _createFile(
-        outputDir: outputDirectory,
-        outputFile: 'main.dart',
-        template: 'init/main',
-        vars: {
-          '': '',
-        },
-        overwrite: overwrite,
-        dry: dry,
-      )}');
-
       printer.writeln('$prefix ${await _createFile(
         outputDir: '$outputDirectory/app',
         outputFile: 'app_auth.dart',
@@ -132,8 +126,41 @@ class InitAction extends Action {
 
       printer.writeln('$prefix ${await _createFile(
         outputDir: '$outputDirectory/app',
+        outputFile: 'app_ui.dart',
+        template: 'init/app/app_ui',
+        vars: {
+          '': '',
+        },
+        overwrite: overwrite,
+        dry: dry,
+      )}');
+
+      printer.writeln('$prefix ${await _createFile(
+        outputDir: '$outputDirectory/app',
         outputFile: 'environment.dart',
         template: 'init/app/environment',
+        vars: {
+          '': '',
+        },
+        overwrite: overwrite,
+        dry: dry,
+      )}');
+
+      printer.writeln('$prefix ${await _createFile(
+        outputDir: '$outputDirectory/app',
+        outputFile: 'global_var.dart',
+        template: 'init/app/global_var',
+        vars: {
+          '': '',
+        },
+        overwrite: overwrite,
+        dry: dry,
+      )}');
+
+      printer.writeln('$prefix ${await _createFile(
+        outputDir: '$outputDirectory/app',
+        outputFile: 'index.dart',
+        template: 'init/app/index',
         vars: {
           '': '',
         },
@@ -154,6 +181,28 @@ class InitAction extends Action {
       )}');
 
       printer.writeln('$prefix ${await _createFile(
+        outputDir: '$outputDirectory/common',
+        outputFile: 'live_data.dart',
+        template: 'init/common/live_data',
+        vars: {
+          '': '',
+        },
+        overwrite: overwrite,
+        dry: dry,
+      )}');
+
+      printer.writeln('$prefix ${await _createFile(
+        outputDir: '$outputDirectory/common',
+        outputFile: 'translate.dart',
+        template: 'init/common/translate',
+        vars: {
+          '': '',
+        },
+        overwrite: overwrite,
+        dry: dry,
+      )}');
+
+      printer.writeln('$prefix ${await _createFile(
         outputDir: '$outputDirectory/common/extension',
         outputFile: 'string.dart',
         template: 'init/common/extension/string',
@@ -164,7 +213,98 @@ class InitAction extends Action {
         dry: dry,
       )}');
 
-      // db
+      // config
+      printer.writeln('$prefix ${await _createFile(
+        outputDir: '$outputDirectory/config/env',
+        outputFile: 'dev_api.dart',
+        template: 'init/config/env/dev_api',
+        vars: {
+          '': '',
+        },
+        overwrite: overwrite,
+        dry: dry,
+      )}');
+
+      printer.writeln('$prefix ${await _createFile(
+        outputDir: '$outputDirectory/config/env',
+        outputFile: 'dev_mock.dart',
+        template: 'init/config/env/dev_mock',
+        vars: {
+          '': '',
+        },
+        overwrite: overwrite,
+        dry: dry,
+      )}');
+
+      printer.writeln('$prefix ${await _createFile(
+        outputDir: '$outputDirectory/config/env',
+        outputFile: 'prod_api.dart',
+        template: 'init/config/env/prod_api',
+        vars: {
+          '': '',
+        },
+        overwrite: overwrite,
+        dry: dry,
+      )}');
+
+      for(var theme in ['theme1', 'theme2']) {
+        printer.writeln('$prefix ${await _createFile(
+          outputDir: '$outputDirectory/config/theme',
+          outputFile: '$theme.dart',
+          template: 'init/config/theme/$theme',
+          vars: {
+            '': '',
+          },
+          overwrite: overwrite,
+          dry: dry,
+        )}');
+      }
+
+      printer.writeln('$prefix ${await _createFile(
+        outputDir: '$outputDirectory/config',
+        outputFile: 'assets.dart',
+        template: 'init/config/assets',
+        vars: {
+          '': '',
+        },
+        overwrite: overwrite,
+        dry: dry,
+      )}');
+
+      printer.writeln('$prefix ${await _createFile(
+        outputDir: '$outputDirectory/config',
+        outputFile: 'di.dart',
+        template: 'init/config/di',
+        vars: {
+          '': '',
+        },
+        overwrite: overwrite,
+        dry: dry,
+      )}');
+
+      printer.writeln('$prefix ${await _createFile(
+        outputDir: '$outputDirectory/config',
+        outputFile: 'log.dart',
+        template: 'init/config/log',
+        vars: {
+          '': '',
+        },
+        overwrite: overwrite,
+        dry: dry,
+      )}');
+
+      printer.writeln('$prefix ${await _createFile(
+        outputDir: '$outputDirectory/config',
+        outputFile: 'startup.dart',
+        template: 'init/config/startup',
+        vars: {
+          '': '',
+        },
+        overwrite: overwrite,
+        dry: dry,
+      )}');
+
+      // data
       printer.writeln('$prefix ${await _createFile(
         outputDir: '$outputDirectory/data/db',
         outputFile: 'database.dart',
@@ -175,6 +315,7 @@ class InitAction extends Action {
         overwrite: overwrite,
         dry: dry,
       )}');
+
       printer.writeln('$prefix ${await _createFile(
         outputDir: '$outputDirectory/data/network',
         outputFile: 'app_api.dart',
@@ -185,10 +326,33 @@ class InitAction extends Action {
         overwrite: overwrite,
         dry: dry,
       )}');
+
+      printer.writeln('$prefix ${await _createFile(
+        outputDir: '$outputDirectory/data/network',
+        outputFile: 'interceptor.dart',
+        template: 'init/data/network/interceptor',
+        vars: {
+          '': '',
+        },
+        overwrite: overwrite,
+        dry: dry,
+      )}');
+
       printer.writeln('$prefix ${await _createFile(
         outputDir: '$outputDirectory/data/preference',
         outputFile: 'app_pref.dart',
         template: 'init/data/preference/app_pref',
+        vars: {
+          '': '',
+        },
+        overwrite: overwrite,
+        dry: dry,
+      )}');
+
+      printer.writeln('$prefix ${await _createFile(
+        outputDir: '$outputDirectory/data/service',
+        outputFile: 'app_service.dart',
+        template: 'init/data/service/app_service',
         vars: {
           '': '',
         },
@@ -208,7 +372,114 @@ class InitAction extends Action {
         dry: dry,
       )}');
 
+      printer.writeln('$prefix ${await _createFile(
+        outputDir: '$outputDirectory/model/api',
+        outputFile: 'item.dart',
+        template: 'init/model/api/item',
+        vars: {
+          '': '',
+        },
+        overwrite: overwrite,
+        dry: dry,
+      )}');
+
+      // ui
+      printer.writeln('$prefix ${await _createFile(
+        outputDir: '$outputDirectory/ui/main',
+        outputFile: 'launch_screen.dart',
+        template: 'init/ui/main/launch_screen',
+        vars: {
+          '': '',
+        },
+        overwrite: overwrite,
+        dry: dry,
+      )}');
+
+      for (var page in ['home', 'setting', 'user']) {
+        printer.writeln('$prefix ${await _createFile(
+          outputDir: '$outputDirectory/ui/pages/$page',
+          outputFile: '$page.logic.dart',
+          template: 'init/ui/pages/$page/$page.logic',
+          vars: {
+            '': '',
+          },
+          overwrite: overwrite,
+          dry: dry,
+        )}');
+        printer.writeln('$prefix ${await _createFile(
+          outputDir: '$outputDirectory/ui/pages/$page',
+          outputFile: '$page.view.dart',
+          template: 'init/ui/pages/$page/$page.view',
+          vars: {
+            '': '',
+          },
+          overwrite: overwrite,
+          dry: dry,
+        )}');
+      }
+
+      printer.writeln('$prefix ${await _createFile(
+        outputDir: '$outputDirectory/ui/widgets',
+        outputFile: 'none.dart',
+        template: 'init/ui/widgets/none',
+        vars: {
+          '': '',
+        },
+        overwrite: overwrite,
+        dry: dry,
+      )}');
+
+      printer.writeln('$prefix ${await _createFile(
+        outputDir: '$outputDirectory/ui/widgets',
+        outputFile: 'example_widget.dart',
+        template: 'init/ui/widgets/example_widget',
+        vars: {
+          '': '',
+        },
+        overwrite: overwrite,
+        dry: dry,
+      )}');
+
       // root
+      for (var main in ['main', 'main_dev_api', 'main_dev_mock', 'main_dev_prod']) {
+        printer.writeln('$prefix ${await _createFile(
+          outputDir: outputDirectory,
+          outputFile: '$main.dart',
+          template: 'init/$main',
+          vars: {
+            '': '',
+          },
+          overwrite: overwrite,
+          dry: dry,
+        )}');
+      }
+
+      for (var lang in ['string', 'string_th']) {
+        printer.writeln('$prefix ${await _createFile(
+          outputDir: 'assets/lang',
+          outputFile: '$lang.lang.yaml',
+          template: 'init/assets/lang/$lang.lang.yaml',
+          vars: {
+            '': '',
+          },
+          overwrite: overwrite,
+          dry: dry,
+        )}');
+      }
+
+      for (var model in ['item', 'items']) {
+        printer.writeln('$prefix ${await _createFile(
+          outputDir: 'assets/mock',
+          outputFile: '$model.json',
+          template: 'init/assets/lang/$model.json',
+          vars: {
+            '': '',
+          },
+          overwrite: overwrite,
+          dry: dry,
+        )}');
+      }
+
       printer.writeln('$prefix ${await _createFile(
         outputDir: '',
         outputFile: 'build.yaml',
@@ -230,32 +501,13 @@ class InitAction extends Action {
         overwrite: overwrite,
         dry: dry,
       )}');
-
-      // HomePage
-      var status;
-      status = await MakePageAction().exec(Command.copyWith(
-        input,
-        cmd: 'make:page',
-        options: ['home'],
-        arguments: {
-          '--dir': '$outputDirectory/ui/pages',
-        },
-      ));
-      if (status != 0) return status;
-
-      status = await MakeModelAction().exec(Command.copyWith(
-        input,
-        cmd: 'make:model',
-        options: ['api/item'],
-        arguments: {
-          '--dir': '$outputDirectory/model',
-        },
-      ));
-      if (status != 0) return status;
     } catch (e) {
       printer.writeln(printer.red('[e] $e'));
       return 2;
     }
+
+    printer.writeln('create project files -> done.');
+    printer.writeln('please run `aves generate` to complete initialize.');
 
     return 0;
   }

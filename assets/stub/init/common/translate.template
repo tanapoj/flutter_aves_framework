@@ -1,0 +1,8 @@
+/// Project: {{#projectName}}
+/// Author: {{#author}}
+/// Created at: {{#createdAt}}
+
+import 'package:{{#projectName}}/config/lang/translations.g.dart' as slang;
+export '../../config/lang/translations.g.dart';
+
+slang.TranslationsEn get tt => slang.slang_global_tt;

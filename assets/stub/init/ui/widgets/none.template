@@ -1,0 +1,34 @@
+import 'package:flutter/widgets.dart';
+
+class None extends SizedBox {
+  const None({super.key, super.width, super.height, super.child});
+}
+
+class NoneElement extends Widget {
+  static NoneElement? _singleton;
+
+  factory NoneElement({Key? key}) {
+    _singleton ??= NoneElement._internal(key: key);
+    return _singleton!;
+  }
+
+  const NoneElement._internal({Key? key}) : super(key: key);
+
+  @override
+  Element createElement() => _NoneElement(this);
+}
+
+class _NoneElement extends Element {
+  _NoneElement(NoneElement widget) : super(widget);
+
+  @override
+  void mount(Element? parent, dynamic newSlot) {
+    super.mount(parent, newSlot);
+  }
+
+  @override
+  bool get debugDoingBuild => false;
+
+  @override
+  void performRebuild() {}
+}

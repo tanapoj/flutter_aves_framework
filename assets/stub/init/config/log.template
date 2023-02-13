@@ -1,0 +1,40 @@
+/// Project: {{#projectName}}
+/// Author: {{#author}}
+/// Created at: {{#createdAt}}
+
+import 'package:aves/common/log.dart';
+import 'package:aves/common/syslog.dart';
+import 'package:flutter_live_data/log.dart' as fld;
+
+Logger appLog = Logger.instance;
+Logger sysLog = SysLogger.instance;
+
+class LiveDataSysLogAdapter implements fld.Logger {
+  @override
+  void close() => sysLog.close();
+
+  @override
+  void d(message, [error, StackTrace? stackTrace]) => sysLog.d(message, error, stackTrace);
+
+  @override
+  void e(message, [error, StackTrace? stackTrace]) => sysLog.e(message, error, stackTrace);
+
+  @override
+  void i(message, [error, StackTrace? stackTrace]) => sysLog.i(message, error, stackTrace);
+
+  @override
+  void log(level, message, [error, StackTrace? stackTrace]) => sysLog.log(message, error, stackTrace);
+
+  @override
+  void v(message, [error, StackTrace? stackTrace]) => sysLog.v(message, error, stackTrace);
+
+  @override
+  void w(message, [error, StackTrace? stackTrace]) => sysLog.w(message, error, stackTrace);
+
+  @override
+  void wtf(message, [error, StackTrace? stackTrace]) => sysLog.wtf(message, error, stackTrace);
+}
+
+bindSysLogAdapterToLiveData() {
+  fld.Logger.instance = LiveDataSysLogAdapter();
+}

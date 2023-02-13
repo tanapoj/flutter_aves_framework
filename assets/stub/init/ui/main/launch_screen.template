@@ -1,0 +1,54 @@
+/// Project: {{#projectName}}
+/// Author: {{#author}}
+/// Created at: {{#createdAt}}
+
+import 'package:flutter/material.dart';
+import 'package:{{#projectName}}/app/app_provider.dart';
+import 'package:{{#projectName}}/config/startup.dart';
+
+class LaunchScreenPage extends StatefulWidget {
+  const LaunchScreenPage({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  State<LaunchScreenPage> createState() => _StartupPageState();
+
+  factory LaunchScreenPage.build() {
+    return const LaunchScreenPage();
+  }
+}
+
+class _StartupPageState extends State<LaunchScreenPage> {
+  @override
+  void initState() {
+    super.initState();
+    _init();
+  }
+
+  _init() async {}
+
+  @override
+  Widget build(BuildContext context) {
+    var app = App.of(context);
+    startup(context).then((_) async {
+      app.router.push(
+        (context) => app.navigator.home(),
+        replacement: true,
+      );
+    });
+    return _widgetSplashScreen(context);
+  }
+
+  Widget _widgetSplashScreen(BuildContext context) {
+    return Scaffold(
+      body: Builder(
+        builder: (innerContext) {
+          return const Center(
+            child: Text('starting up..'),
+          );
+        },
+      ),
+    );
+  }
+}

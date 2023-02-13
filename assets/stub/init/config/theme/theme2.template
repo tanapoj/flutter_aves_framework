@@ -1,0 +1,26 @@
+/// Project: {{#projectName}}
+/// Author: {{#author}}
+/// Created at: {{#createdAt}}
+
+import 'package:{{#projectName}}/config/theme/theme1.dart';
+import 'package:flutter/material.dart' as m;
+
+class AppTheme2 extends AppTheme {
+  @override
+  String get name => 'theme-2';
+
+  @override
+  m.ThemeData get themeData {
+    return m.ThemeData(
+      primarySwatch: m.Colors.teal,
+      colorScheme: const m.ColorScheme.dark().copyWith(
+        primary: m.Colors.teal,
+      ),
+    );
+  }
+
+  @override
+  String toString() {
+    return 'AppTheme{dark theme}';
+  }
+}

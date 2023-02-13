@@ -1,0 +1,94 @@
+/// Project: {{#projectName}}
+/// Author: {{#author}}
+/// Created at: {{#createdAt}}
+
+import 'package:flutter/material.dart';
+import 'package:aves/index.dart';
+import 'package:{{#projectName}}/data/service/app_service.dart';
+import 'package:{{#projectName}}/model/api/item.dart';
+import 'package:{{#projectName}}/model/user.dart';
+import 'package:{{#projectName}}/app/index.dart';
+import 'home.view.dart';
+
+class HomeLogic extends ComponentLogic {
+  @override
+  String get name => 'home';
+
+  /// Class Parameters
+  /// if you want to customize, add here, then add parameter to constructor and build
+  final LifeCycleOwner? parent;
+
+  HomeLogic({
+    Key? key,
+    required Widget Function(ComponentLogic) builder,
+    this.parent,
+  }) : super(key: key, builder: builder);
+
+  factory HomeLogic.build({LifeCycleOwner? parent}) {
+    return HomeLogic(
+      parent: parent,
+      builder: (logic) => HomeView(logic as HomeLogic),
+    );
+  }
+
+  /// Service
+  final AppService appService = inject<AppService>();
+
+  /// Define LiveData
+  late final LiveData<int> $counter = LiveData(0).owner(this);
+  late final LiveData<User?> $user = LiveData<User?>(null).owner(this);
+  late final LiveData<ItemModel?> $data = LiveData<ItemModel?>(null).owner(this);
+
+  /// LiveCycle Listener
+  /// if no use, you can remove them
+
+  @override
+  onCreate() async {
+    super.onCreate();
+    // TODO when page constructed
+    _init();
+  }
+
+  @override
+  onInit() async {
+    super.onInit();
+    // TODO when page start running
+  }
+
+  @override
+  onResume() {
+    super.onResume();
+    // TODO when page resume after it paused
+  }
+
+  @override
+  onPause() {
+    // TODO when page leaving from display
+    super.onPause();
+  }
+
+  @override
+  onDispose() {
+    // TODO when page destroy (end of running)
+    super.onDispose();
+  }
+
+  /// Define action
+  /// custom method, called by view
+  _init() async {
+    ItemModel? item = await appService.getItem(1);
+    $data.value = item;
+
+    if (auth.isLogin) {
+      $user.value = auth.user;
+    }
+  }
+
+  increment() {
+    $counter.value++;
+  }
+
+  incrementAccumulate() {
+    global.$accumulator.value++;
+  }
+}

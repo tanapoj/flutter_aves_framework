@@ -3,12 +3,13 @@
 /// Created at: {{#createdAt}}
 
 import 'package:aves/index.dart';
+import 'package:flutter_live_data/live_source.dart';
 import 'package:{{#projectName}}/app/app_provider.dart';
 import 'package:{{#projectName}}/config/lang/translations.g.dart';
-import 'package:{{#projectName}}/data/preferences/framework_preference.dart';
+import 'package:{{#projectName}}/data/preference/app_pref.dart';
 
 class _AppTranslator extends TranslationsEn {
-  final FrameworkPreference _pref = FrameworkPreference();
+  final AppPreference _pref = AppPreference();
 
   _AppTranslator() : super.build();
 
@@ -16,34 +17,33 @@ class _AppTranslator extends TranslationsEn {
 
   AppLocale get locale => _locale;
 
-  LiveDataSource<AppLocale> $state = LiveDataSource(
+  late LiveData<AppLocale> $state = LiveSource(
     AppLocale.en,
-    dataSourceInterface: null,
+    adapter: LiveDataSourceAdapter(
+      saveData: (value) async {
+        _pref.setAppLocale(value);
+      },
+    ),
   );
 
   syncInit() {}
 
   asyncInit() async {
     setLocale(await _pref.getAppLocale());
-    $state.dataSourceInterface = createDataSourceInterface<AppLocale>(
-      loadValueAction: null,
-      onValueUpdatedAction: (AppLocale value, bool hasChange) async {
-        _pref.setAppLocale(value);
-      },
-    );
     return Future.value(null);
   }
 
   setLocale(AppLocale locale) {
     _locale = locale;
     LocaleSettings.instance.setLocale(_locale);
+    $state.value = locale;
   }
 }
 
 class AppTranslator extends _AppTranslator {
   AppTranslator(App provider) : super() {
     $state.listen((value) {
-      provider.$state.tick();
+      provider.changeNotify();
     });
   }
 

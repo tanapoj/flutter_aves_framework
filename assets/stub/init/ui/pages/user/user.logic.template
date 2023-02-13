@@ -1,0 +1,68 @@
+/// Project: {{#projectName}}
+/// Author: {{#author}}
+/// Created at: {{#createdAt}}
+
+import 'package:flutter/material.dart';
+import 'package:aves/common/log.dart';
+import 'package:aves/index.dart';
+import 'package:{{#projectName}}/model/user.dart';
+import 'package:{{#projectName}}/app/index.dart';
+import 'user.view.dart';
+
+class UserLogic extends ComponentLogic {
+  @override
+  String get name => 'user';
+
+  /// Class Parameters
+  /// if you want to customize, add here, then add parameter to constructor and build
+  final LifeCycleOwner? parent;
+
+  UserLogic({
+    Key? key,
+    required Widget Function(ComponentLogic) builder,
+    this.parent,
+  }) : super(key: key, builder: builder);
+
+  factory UserLogic.build({LifeCycleOwner? parent}) {
+    return UserLogic(
+      parent: parent,
+      builder: (logic) => UserView(logic as UserLogic),
+    );
+  }
+
+  /// Define LiveData
+  late final LiveData<User?> $user = LiveData<User?>(null).owner(this);
+  late final LiveData<String?> $error = LiveData<String?>(null).owner(this);
+
+  /// LiveCycle Listener
+
+  @override
+  onCreate() {
+    super.onCreate();
+    _init();
+  }
+
+  _init() {
+    if (auth.isLogin) {
+      $user.value = auth.user;
+    }
+  }
+
+  /// Define action
+  /// custom method, called by view
+  login(String username, String password) {
+    $error.value = null;
+    if (username.trim().toLowerCase() == 'test' && password == '1234') {
+      auth.setUser(User(1, 'test'));
+      $user.value = auth.user;
+    } else {
+      $error.value = 'username or password is incorrect!';
+    }
+  }
+
+  logout() {
+    auth.unsetUser();
+    $user.value = null;
+    $error.value = null;
+  }
+}

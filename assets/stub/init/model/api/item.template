@@ -1,0 +1,61 @@
+/// Project: {{#projectName}}
+/// Author: {{#author}}
+/// Created at: {{#createdAt}}
+
+import 'package:json_annotation/json_annotation.dart';
+import 'package:meta/meta.dart';
+
+part 'item.g.dart';
+
+//=========================================
+// ItemModel
+//=========================================
+
+@JsonSerializable(explicitToJson: true)
+@immutable
+class ItemModel {
+
+  // TODO: (1) add Model's Fields
+
+  @JsonKey(name: 'id')
+  final int id;
+  @JsonKey(name: 'name')
+  final String name;
+  @JsonKey(name: 'price')
+  final double price;
+  @JsonKey(name: 'created_at', fromJson: _parseDateTime)
+  final DateTime createdAt;
+
+  static DateTime _parseDateTime(String formattedString) => DateTime.parse(formattedString);
+
+  // Do not modify this section
+
+  factory ItemModel.fromJson(Map<String, dynamic> json) => _$ItemModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ItemModelToJson(this);
+
+  const ItemModel(this.id, this.name, this.price, this.createdAt);
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is ItemModel &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          name == other.name &&
+          price == other.price &&
+          createdAt == other.createdAt;
+
+  @override
+  int get hashCode => id.hashCode ^ name.hashCode ^ price.hashCode ^ createdAt.hashCode;
+
+  @override
+  String toString() {
+    return 'ItemModel{id: $id, name: $name, price: $price, createdAt: $createdAt}';
+  }
+
+  // TODO: (2) generate Constructor, == and toString
+
+  // TODO: (3) then run `flutter pub run aves build:model` or `fvm flutter pub run aves build:model`
+
+}

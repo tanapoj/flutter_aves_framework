@@ -1,0 +1,241 @@
+/// Project: {{#projectName}}
+/// Author: {{#author}}
+/// Created at: {{#createdAt}}
+
+import 'dart:convert';
+import 'dart:math';
+
+import 'package:flutter/services.dart';
+import 'package:aves/architecture/di.dart';
+import 'package:aves/common/log.dart';
+import 'package:aves/data/network/network.dart';
+import 'package:{{#projectName}}/app/index.dart';
+import 'package:{{#projectName}}/data/network/app_api.dart';
+
+class Pagination {
+  final int from;
+  final int to;
+  final int total;
+
+  Pagination(this.from, this.to, this.total);
+
+  int page({required int perPage}) {
+    return (from / perPage).ceil() + 1;
+  }
+
+  int totalPage({required int perPage}) {
+    return (total / perPage).ceil();
+  }
+
+  @override
+  String toString() {
+    return 'Pagination{$from-$to/$total}';
+  }
+}
+
+extension ResponsePagination on Response {
+  Pagination? get pagination {
+    if (extra is! Map || !extra.containsKey('pagination')) return null;
+    var pagination = extra['pagination'];
+    if (!pagination.containsKey('from') || !pagination.containsKey('to') || !pagination.containsKey('total')) {
+      return null;
+    }
+    return Pagination(pagination['from'], pagination['to'], pagination['total']);
+  }
+}
+
+RequestInterceptor useMockData({
+  required String fileName,
+  Duration? responseTime,
+  int statusCode = 200,
+}) {
+  if (!app().env.isUsingNetworkMockData) {
+    return RequestInterceptor(interceptor: (Request request) async {
+      return RequestInterceptorFlow(request);
+    });
+  }
+  int randInt(int from, int to) => Random().nextInt(to - from + 1) + from;
+  responseTime ??= Duration(milliseconds: randInt(200, 800));
+  return RequestInterceptor(interceptor: (Request request) async {
+    if (responseTime!.isNegative == false) {
+      await Future.delayed(responseTime);
+    }
+    final content = await rootBundle.loadString(fileName);
+    var m = jsonDecode(content);
+    return RequestInterceptorFlow(request,
+        terminate: true,
+        response: Response(
+          statusCode: statusCode,
+          data: m,
+          body: content,
+        ));
+  });
+}
+
+RequestInterceptor useUserAuthorizationToken() {
+  return RequestInterceptor(interceptor: (Request request) async {
+    var user = app().auth.user;
+    if (user == null) {
+      return RequestInterceptorFlow(request);
+    }
+    return RequestInterceptorFlow(
+      request
+        ..queryParameter['Authorization'] = user.token
+        ..headers['Authorization'] = 'Bearer ${user.token}',
+      terminate: false,
+    );
+  });
+}
+
+ResponseInterceptor useUnboxedStructure() {
+  return ResponseInterceptor(interceptor: (Response response) async {
+    if (!response.ok) {
+      return ResponseInterceptorFlow(response, terminate: true);
+    }
+    try {
+      Map<String, dynamic> model = response.data is String ? jsonDecode(response.data) : response.data;
+
+      bool unacceptable = false;
+
+      if (model['status'] == 'success' && !model.containsKey('data')) unacceptable = true;
+      if (unacceptable) {
+        return ResponseInterceptorFlow(
+          ResponseCustomError(
+            error: response.data,
+            body: response.body,
+            statusCode: response.statusCode,
+            headers: response.headers,
+            message: 'JSend Success Structure Incorrect',
+          ),
+          terminate: true,
+        );
+      }
+
+      if ((model['status'] == 'fail' || model['status'] == 'error') && !model.containsKey('code')) unacceptable = true;
+      if (unacceptable) {
+        return ResponseInterceptorFlow(
+          ResponseCustomError(
+            error: response.data,
+            body: response.body,
+            statusCode: response.statusCode,
+            headers: response.headers,
+            message: 'JSend Fail/Error Structure Incorrect',
+          ),
+          terminate: true,
+        );
+      }
+
+      if (model['status'] != 'success') unacceptable = true;
+      if (![200, 201].contains(response.statusCode)) unacceptable = true;
+      if (unacceptable) {
+        return ResponseInterceptorFlow(
+          ResponseCustomError(
+            error: model,
+            body: response.body,
+            statusCode: response.statusCode,
+            headers: response.headers,
+            message: 'JSend Status: ${model['status']}',
+          ),
+          terminate: true,
+        );
+      }
+
+      return ResponseInterceptorFlow(
+        Response<Map<String, dynamic>>(
+          data: model['data'],
+          body: response.body,
+          statusCode: response.statusCode,
+          headers: response.headers,
+          message: response.message,
+        ),
+        terminate: false,
+      );
+    } on FormatException catch (e) {
+      var errorMessage = 'Interceptor: useUnboxedStructure Error, cannot unwrap = ${response.data}';
+      appLog.w(errorMessage);
+      return ResponseInterceptorFlow(
+        ResponseCustomError(
+          error: null,
+          body: response.body,
+          statusCode: response.statusCode,
+          headers: response.headers,
+          message: errorMessage,
+        ),
+        terminate: true,
+      );
+    }
+  });
+}
+
+ResponseInterceptor useRetry({required int limit}) {
+  int count = 0;
+  return ResponseInterceptor(interceptor: (Response response) async {
+    if (count < limit && response.statusCode != 200) {
+      count++;
+      return ResponseInterceptorFlow(response, terminate: false, startAgain: true);
+    } else {
+      return ResponseInterceptorFlow(response, terminate: false, startAgain: false);
+    }
+  });
+}
+
+ResponseInterceptor useContentRangePagination() {
+  return ResponseInterceptor(interceptor: (Response response) async {
+    var contentRanges = [];
+    try {
+      contentRanges = (response.headers?['content-range']?[0] ?? '').split(' ');
+    } catch (e) {}
+    int from = -1;
+    int to = -1;
+    int total = -1;
+    if (contentRanges.length == 2) {
+      var label = contentRanges[0];
+      final regexp = RegExp(r'^([0-9]+)\-([0-9]+)/([0-9]+)');
+      final match = regexp.firstMatch(contentRanges[1]);
+      from = int.tryParse(match?.group(1) ?? '$from') ?? from;
+      to = int.tryParse(match?.group(2) ?? '$to') ?? to;
+      total = int.tryParse(match?.group(3) ?? '$total') ?? total;
+    }
+
+    if (response.extra is! Map) response.extra = {};
+    response.extra['pagination'] = {
+      'from': from,
+      'to': to,
+      'total': total,
+    };
+
+    return ResponseInterceptorFlow(response, terminate: false, startAgain: false);
+  });
+}
+
+ResponseInterceptor useReAuth() {
+  int limit = 2;
+  int count = 0;
+  return ResponseInterceptor(interceptor: (Response response) async {
+    var api = inject<AppApi>();
+    var user = app().auth.user;
+    if (user == null) {
+      return ResponseInterceptorFlow(response, terminate: false, startAgain: false);
+    }
+
+    if (count < limit && response.statusCode == 401) {
+      count++;
+
+      var res = await api.auth(username: 'username', password: 'password').fetch();
+      user.setToken('${res.data?['data']['token']}');
+
+      return ResponseInterceptorFlow(
+        response,
+        terminate: false,
+        startAgain: true,
+        // requestDecorator: (req) {
+        //   return req
+        //     ..queryParameter['Authorization'] = userToken.token
+        //     ..headers['Authorization'] = userToken.token;
+        // },
+      );
+    } else {
+      return ResponseInterceptorFlow(response, terminate: false, startAgain: false);
+    }
+  });
+}

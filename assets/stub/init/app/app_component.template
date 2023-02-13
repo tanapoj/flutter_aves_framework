@@ -2,12 +2,11 @@
 /// Author: {{#author}}
 /// Created at: {{#createdAt}}
 
+import 'package:flutter/material.dart';
 import 'package:aves/architecture/component/logic.dart' as l;
 import 'package:aves/architecture/component/view.dart' as v;
 import 'package:aves/common/syslog.dart';
-import 'package:flutter/material.dart';
-import 'package:{{#projectName}}/config/global_var.dart';
-import 'package:{{#projectName}}/model/user.dart';
+import 'package:{{#projectName}}/app/global_var.dart';
 import 'index.dart';
 
 abstract class ComponentLogic<T> extends l.Logic<T> {
@@ -16,12 +15,25 @@ abstract class ComponentLogic<T> extends l.Logic<T> {
     required Widget Function(ComponentLogic) builder,
   }) : super(key: key, builder: (component) => builder(component as ComponentLogic));
 
+  @Deprecated('Use [router]')
   AppNavigator get nav {
     if (context == null) {
       sysLog.e('context is null');
       throw Exception();
     }
     return App.of(context!).navigator;
+  }
+
+  AppRouterFacade get router {
+    if (context == null) {
+      sysLog.e('context is null');
+      throw Exception();
+    }
+    return AppRouterFacade(
+      appNavigator: App.of(context!).navigator,
+      context: context!,
+      routeRefName: name,
+    );
   }
 
   AppTranslator get translator {
@@ -41,7 +53,7 @@ abstract class ComponentLogic<T> extends l.Logic<T> {
     return App.of(context!).ui;
   }
 
-  AppAuth<User> get auth {
+  AppAuth get auth {
     if (context == null) {
       sysLog.e('context is null');
       throw Exception();
@@ -66,11 +78,13 @@ abstract class View<BC extends ComponentLogic> extends v.View<BC> {
 
   AppNavigator get nav => logic.nav;
 
+  AppRouterFacade get router => logic.router;
+
   AppTranslator get translator => logic.translator;
 
   AppUi get ui => logic.ui;
 
-  AppAuth<User> get auth => logic.auth;
+  AppAuth get auth => logic.auth;
 
   GlobalVar get global => logic.global;
 }

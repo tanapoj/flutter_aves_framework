@@ -1,0 +1,88 @@
+/// Project: {{#projectName}}
+/// Author: {{#author}}
+/// Created at: {{#createdAt}}
+
+import 'package:flutter/material.dart';
+import 'package:aves/index.dart';
+import 'package:{{#projectName}}/model/user.dart';
+import 'package:{{#projectName}}/app/index.dart' as app;
+import 'user.logic.dart';
+
+class UserView extends app.View<UserLogic> {
+  UserView(UserLogic logic, {Key? key}) : super(logic, key: key);
+
+  final TextEditingController txtUsername = TextEditingController()..text = 'test';
+  final TextEditingController txtPassword = TextEditingController()..text = '1234';
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Login"),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(32.0),
+        child: Column(
+          children: [
+            $when(logic.$user)
+              ..$case((User? user) => user == null, build: (_, User? user) {
+                return Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: TextField(
+                        controller: txtUsername,
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: 'Username',
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: TextField(
+                        controller: txtPassword,
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: 'Password',
+                        ),
+                      ),
+                    ),
+                    Text('HINT: try `test` and `1234`'),
+                  ],
+                );
+              })
+              ..$else(build: (_, User? user) {
+                return Text('Login as ${user!.name}');
+              }),
+            $guard.isNotNull(logic.$error, build: (_, String? error) {
+              return Text(
+                error!,
+                style: const TextStyle(
+                  color: Colors.red,
+                ),
+              );
+            }),
+            $when(logic.$user)
+              ..$case((User? user) => user == null, build: (_, User? user) {
+                return ElevatedButton(
+                  child: const Text('Login'),
+                  onPressed: () {
+                    logic.login(txtUsername.text, txtPassword.text);
+                  },
+                );
+              })
+              ..$else(build: (_, User? user) {
+                return ElevatedButton(
+                  child: const Text('Logout'),
+                  onPressed: () {
+                    logic.logout();
+                  },
+                );
+              })
+          ],
+        ),
+      ),
+    );
+  }
+}

@@ -8,23 +8,19 @@ import 'package:{{#projectName}}/app/index.dart';
 @immutable
 class DevMockEnvironment extends Environment {
   @override
-  String get envName => 'dev-mock env';
+  String get envName => 'dev-mock';
 
   @override
-  String get appName => 'Aves (Dev Mock)';
+  String get appName => 'Aves Demo';
 
   @override
   int get logLevel => 1;
 
   @override
-  bool get isProduction {
-    return false;
-  }
+  bool get isProduction => false;
 
   @override
-  bool get isDebugMode {
-    return true;
-  }
+  bool get isDebugMode => true;
 
   @override
   bool get isUsingNetworkMockData => true;
@@ -36,7 +32,7 @@ class DevMockEnvironment extends Environment {
   bool get isSystemLogging => true;
 
   @override
-  String get baseUrl => 'https://api.aves.com';
+  String get baseUrl => 'https://local';
 
   @override
   String toString() {

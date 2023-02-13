@@ -1,0 +1,20 @@
+/// Project: {{#projectName}}
+/// Author: {{#author}}
+/// Created at: {{#createdAt}}
+
+import 'package:flutter/material.dart' as m;
+
+class AppTheme {
+  String get name => 'theme-1';
+
+  m.ThemeData get themeData {
+    return m.ThemeData(
+      primarySwatch: m.Colors.teal,
+    );
+  }
+
+  @override
+  String toString() {
+    return 'AppTheme{light theme}';
+  }
+}

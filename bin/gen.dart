@@ -15,7 +15,7 @@ void main(List<String> arguments) async {
   output += 'Map<String,String> template = {\n';
   for (var entry in m.entries) {
     var name = entry.key;
-    var content = entry.value.replaceAll('\$', '\\\$');
+    var content = entry.value.replaceAll('\$', '\\\$').replaceAll('\\n', '\\\\n').replaceAll('"', '\\"');
     printer.writeln('- $name');
     output += '"$name": """$content""",\n';
   }

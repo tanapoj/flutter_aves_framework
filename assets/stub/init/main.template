@@ -4,14 +4,14 @@
 
 import 'package:flutter/material.dart';
 import 'package:bloc_builder/index.dart';
-import 'package:{{#projectName}}/config/env/dev_mock.dart';
-import 'package:{{#projectName}}/ui/main/startup.dart';
+import 'package:{{#projectName}}/config/di.dart';
+import 'package:{{#projectName}}/ui/main/launch_screen.dart';
 import 'package:{{#projectName}}/app/index.dart';
-import 'package:{{#projectName}}/common/log.dart';
 import 'package:{{#projectName}}/config/lang/translations.g.dart';
+import 'package:{{#projectName}}/config/log.dart';
 
-void main() {
-  Environment env = DevMockEnvironment();
+void runner(Environment env) {
+  registerFactory(build: () => env);
 
   WidgetsFlutterBinding.ensureInitialized();
   LocaleSettings.useDeviceLocale();
@@ -32,7 +32,7 @@ class MainApplication extends StatelessWidget {
   }) : super(key: key);
 
   @override
-  Widget build(BuildContext _context) {
+  Widget build(BuildContext context) {
     sysLog.i('build MainApplication');
     return App(
       env: env,
@@ -41,16 +41,20 @@ class MainApplication extends StatelessWidget {
           sysLog.i('build AppProvider');
           var app = App.of(context);
           app.syncInit();
+          app.asyncInit();
           return $watch(
             app.$state,
             build: (context, _) {
+              sysLog.i('build-render MaterialApp');
+
+              // run init async
+              // App.of(context).asyncInit();
 
               /// Custom Code here...
-              sysLog.i('build-render MaterialApp');
               return MaterialApp(
                 title: app.env.appName,
                 theme: app.ui.theme.themeData,
-                home: StartupPage.build(),
+                home: LaunchScreenPage.build(),
               );
             },
           );

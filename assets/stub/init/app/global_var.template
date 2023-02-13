@@ -1,0 +1,19 @@
+/// Project: {{#projectName}}
+/// Author: {{#author}}
+/// Created at: {{#createdAt}}
+
+import 'package:aves/index.dart';
+import 'package:flutter_live_data/live_source.dart';
+import 'package:{{#projectName}}/common/live_data.dart';
+
+class GlobalVar {
+  late final LiveData<int> $accumulator = LiveSource(
+    0,
+    adapter: LiveSourcePref.intAdapter('global-accumulator', 0),
+    name: 'global-accumulator',
+  );
+
+  syncInit() {}
+
+  asyncInit() async {}
+}

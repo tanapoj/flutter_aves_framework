@@ -1,0 +1,19 @@
+/// Project: {{#projectName}}
+/// Author: {{#author}}
+/// Created at: {{#createdAt}}
+
+import 'package:aves/data/network/network.dart';
+import 'package:{{#projectName}}/data/network/app_api.dart';
+import 'package:{{#projectName}}/model/api/item.dart';
+import 'package:injectable/injectable.dart' as di;
+
+@di.injectable
+class AppService {
+  final AppApi appApi;
+
+  AppService(this.appApi);
+
+  Future<ItemModel?> getItem(int id) async {
+    return (await appApi.getItem(id).fetch()).data;
+  }
+}

@@ -2,3 +2,55 @@
 /// Author: {{#author}}
 /// Created at: {{#createdAt}}
 
+import 'package:aves/common/json.dart';
+import 'package:aves/data/network/network.dart';
+import 'package:injectable/injectable.dart' as di;
+import 'package:{{#projectName}}/app/environment.dart';
+import 'package:{{#projectName}}/model/api/item.dart';
+import 'interceptor.dart';
+
+@di.injectable
+class AppApi {
+  final Environment env;
+
+  AppApi(this.env);
+
+  Request<T> _request<T>() {
+    return Request<T>.http()
+      ..method = 'GET'
+      ..baseUrl = env.baseUrl
+      ..requestInterceptor = useUserAuthorizationToken()
+      ..responseInterceptor = useRetry(limit: 3);
+  }
+
+  Request<Map<String, dynamic>> auth({required String username, required String password}) {
+    return _request<Map<String, dynamic>>()
+      ..method = 'POST'
+      ..url = 'auth'
+      ..mappingResponse = (dynamic body, response) {
+        return ensureJsonDecodeToMap(body);
+      };
+  }
+
+  Request<ItemModel> getItem(int id) {
+    return _request<ItemModel>()
+      ..method = 'GET'
+      ..url = 'item/$id'
+      ..requestInterceptor = useMockData(fileName: 'assets/mock/item.json')
+      ..mappingResponse = (dynamic body, response) {
+        return ItemModel.fromJson(ensureJsonDecodeToMap(body));
+      };
+  }
+
+  Request<List<ItemModel>> getItems() {
+    return _request<List<ItemModel>>()
+      ..method = 'GET'
+      ..url = 'item'
+      ..requestInterceptor = useMockData(fileName: 'assets/mock/items.json')
+      ..mappingResponse = (dynamic body, response) {
+        return <ItemModel>[
+          ...(ensureJsonDecodeToIterable(body)).map((item) => ItemModel.fromJson(ensureJsonDecodeToMap(item))),
+        ];
+      };
+  }
+}

@@ -1,0 +1,87 @@
+/// Project: {{#projectName}}
+/// Author: {{#author}}
+/// Created at: {{#createdAt}}
+
+import 'package:flutter/material.dart';
+import 'package:aves/index.dart';
+import 'package:{{#projectName}}/common/translate.dart';
+import 'package:{{#projectName}}/model/api/item.dart';
+import 'package:{{#projectName}}/model/user.dart';
+import 'package:{{#projectName}}/ui/pages/setting/setting.logic.dart';
+import 'package:{{#projectName}}/ui/pages/user/user.logic.dart';
+import 'package:{{#projectName}}/app/index.dart' as app;
+import 'home.logic.dart';
+
+class HomeView extends app.View<HomeLogic> {
+  const HomeView(HomeLogic logic, {Key? key}) : super(logic, key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(tt.home_page.title),
+        actions: <Widget>[
+          PopupMenuButton<String>(
+            onSelected: (String s) {
+              switch (s) {
+                case 'user':
+                  router.push((context) => UserLogic.build());
+                  break;
+                case 'setting':
+                  router.push((context) => SettingLogic.build());
+                  break;
+              }
+            },
+            itemBuilder: (BuildContext context) {
+              return [
+                PopupMenuItem<String>(
+                  value: 'user',
+                  child: Text(tt.user_page.title),
+                ),
+                PopupMenuItem<String>(
+                  value: 'setting',
+                  child: Text(tt.setting_page.title),
+                ),
+              ];
+            },
+          )
+        ],
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            if (auth.isLogin) Text('Login as: ${auth.user!.name}') else const Text('not Login'),
+            const Divider(),
+            $guard.isNull(logic.$data, build: (_, ItemModel? item) {
+                  return Text(tt.loading);
+                }) |
+                $watch(logic.$data, build: (_, ItemModel? item) {
+                  return Text('${tt.home_page.loaded_data_is} ${item?.name} (${item?.price})');
+                }),
+            const Divider(),
+            $watch(logic.$counter, build: (_, int count) {
+              return Text('${tt.home_page.counter_is} $count');
+            }),
+            ElevatedButton(
+              onPressed: () {
+                logic.increment();
+              },
+              child: Text(tt.home_page.increment),
+            ),
+            const Divider(),
+            $watch(logic.global.$accumulator, build: (_, int count) {
+              return Text('${tt.home_page.accumulator_is} $count');
+            }),
+            ElevatedButton(
+              onPressed: () {
+                logic.incrementAccumulate();
+              },
+              child: Text(tt.home_page.increment),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

@@ -1,0 +1,69 @@
+/// Project: {{#projectName}}
+/// Author: {{#author}}
+/// Created at: {{#createdAt}}
+
+import 'package:flutter/material.dart';
+import 'package:aves/index.dart';
+import 'package:{{#projectName}}/common/translate.dart';
+import 'package:{{#projectName}}/ui/widgets/none.dart';
+import 'package:{{#projectName}}/app/index.dart' as app;
+import 'setting.logic.dart';
+
+class SettingView extends app.View<SettingLogic> {
+  const SettingView(SettingLogic logic, {Key? key}) : super(logic, key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(tt.setting_page.title),
+      ),
+      body: ListView(
+        children: [
+          Card(
+            child: Column(
+              children: [
+                ListTile(
+                  title: Text(tt.setting_page.locale_en),
+                  trailing: translator.isUsingEnglish ? const Icon(Icons.check_circle) : None(),
+                  onTap: () {
+                    translator.useEnglish();
+                  },
+                ),
+                ListTile(
+                  title: Text(tt.setting_page.locale_th),
+                  trailing: translator.isUsingThai ? const Icon(Icons.check_circle) : None(),
+                  onTap: () {
+                    translator.useThai();
+                  },
+                ),
+              ],
+            ),
+          ),
+          Card(
+            child: Column(
+              children: [
+                ListTile(
+                  title: Text(tt.setting_page.theme_1),
+                  trailing: ui.isUsingTheme1 ? const Icon(Icons.check_circle) : None(),
+                  onTap: () {
+                    ui.useTheme1();
+                  },
+                ),
+                ListTile(
+                  title: Text(
+                    tt.setting_page.theme_2,
+                  ),
+                  trailing: ui.isUsingTheme2 ? const Icon(Icons.check_circle) : None(),
+                  onTap: () {
+                    ui.useTheme2();
+                  },
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

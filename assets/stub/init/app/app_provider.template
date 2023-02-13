@@ -2,17 +2,17 @@
 /// Author: {{#author}}
 /// Created at: {{#createdAt}}
 
+import 'package:flutter/widgets.dart';
 import 'package:aves/architecture/environment.dart';
 import 'package:aves/architecture/provider.dart';
-import 'package:flutter/widgets.dart';
+import 'package:aves/common/log.dart';
+import 'package:aves/common/syslog.dart';
 import 'package:flutter_live_data/index.dart';
+import 'package:{{#projectName}}/app/global_var.dart';
 import 'package:{{#projectName}}/app/app_auth.dart';
 import 'package:{{#projectName}}/app/app_navigator.dart';
 import 'package:{{#projectName}}/app/app_translator.dart';
 import 'package:{{#projectName}}/app/app_ui.dart';
-import 'package:{{#projectName}}/common/log.dart';
-import 'package:{{#projectName}}/config/global_var.dart';
-import 'package:{{#projectName}}/model/user.dart';
 
 // ignore: must_be_immutable
 class App extends AvesProvider {
@@ -22,22 +22,31 @@ class App extends AvesProvider {
     required Environment env,
   }) : super(env: env);
 
-  late AppContext variantContext;
+  BuildContext? _variantContext;
+  bool _isAlreadyRunAsyncInit = false;
 
   late final LiveData<App> $state = LiveData(this);
   late AppNavigator _navigator = AppNavigator();
   late AppTranslator _translator = AppTranslator(this);
   late AppUi _ui = AppUi(this);
-  late AppAuth<User> _auth = AppAuth<User>();
+  late AppAuth _auth = AppAuth(this);
   late GlobalVar _globalVar = GlobalVar();
 
   AppNavigator get navigator => _navigator;
+
+  AppRouterFacade get router {
+    return AppRouterFacade(
+      appNavigator: navigator,
+      context: _variantContext!,
+      routeRefName: '_app',
+    );
+  }
 
   AppTranslator get translator => _translator;
 
   AppUi get ui => _ui;
 
-  AppAuth<User> get auth => _auth;
+  AppAuth get auth => _auth;
 
   GlobalVar get global => _globalVar;
 
@@ -46,7 +55,7 @@ class App extends AvesProvider {
     AppNavigator? navigator,
     AppTranslator? translator,
     AppUi? ui,
-    AppAuth<User>? auth,
+    AppAuth? auth,
     GlobalVar? globalVar,
   }) {
     if (env != null) {
@@ -74,7 +83,13 @@ class App extends AvesProvider {
   static App of(BuildContext context) {
     final AvesProvider? result = context.dependOnInheritedWidgetOfExactType<App>();
     assert(result != null || result is! App, 'No AppProvider found in context');
-    return instance = result! as App;
+    instance = result! as App;
+    instance!._variantContext = context;
+    return instance!;
+  }
+
+  changeNotify(){
+    $state.tick();
   }
 
   @override
@@ -88,39 +103,48 @@ class App extends AvesProvider {
   @override
   syncInit() {
     sysLog.d('AppProvider run syncInit ... start');
+    appLog.setControlProvider(this);
+    sysLog.setControlProvider(this);
     navigator.syncInit();
     ui.syncInit();
     auth.syncInit();
     translator.syncInit();
+    global.syncInit();
     sysLog.d('AppProvider run syncInit ... done');
   }
 
   @override
   asyncInit() async {
+    if (_isAlreadyRunAsyncInit) return;
     sysLog.d('AppProvider run asyncInit ... start');
     await Future.wait(<Future>[
       navigator.asyncInit(),
       ui.asyncInit(),
       auth.asyncInit(),
       translator.asyncInit(),
+      global.asyncInit(),
     ]);
+    _isAlreadyRunAsyncInit = true;
     sysLog.d('AppProvider run asyncInit ... done');
   }
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'AppProvider{\n'
-        '   navigator: $navigator\n'
-        '   translator: $translator\n'
-        '   ui: $ui\n'
-        '   auth: $auth\n'
+    return 'AppProvider{'
+        '   navigator: $navigator'
+        '   translator: $translator'
+        '   ui: $ui'
+        '   auth: $auth'
         '}';
   }
 }
 
 /// App Facade
 
-App app() {
+App app([BuildContext? context]) {
+  if (context != null) {
+    return App.of(context);
+  }
   return App.instance!;
 }
 
@@ -128,7 +152,7 @@ class AppContext {
   Environment? env;
   AppTranslator? translator;
   AppUi? ui;
-  AppAuth<User>? auth;
+  AppAuth? auth;
 
   AppContext({this.env, this.translator, this.ui, this.auth});
 }

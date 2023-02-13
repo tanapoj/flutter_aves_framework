@@ -1,0 +1,12 @@
+/// Project: {{#projectName}}
+/// Author: {{#author}}
+/// Created at: {{#createdAt}}
+
+import 'package:{{#projectName}}/app/environment.dart';
+import 'package:{{#projectName}}/config/env/prod_api.dart';
+import 'package:{{#projectName}}/main.dart';
+
+void main() {
+  Environment env = ProdApiEnvironment();
+  runner(env);
+}

@@ -6,41 +6,37 @@ import 'package:flutter/widgets.dart';
 import 'package:{{#projectName}}/app/index.dart';
 
 @immutable
-class ProdEnvironment extends Environment {
+class ProdApiEnvironment extends Environment {
   @override
-  String get envName => 'prod env';
+  String get envName => 'prod-api';
 
   @override
-  String get appName => 'Aves';
+  String get appName => 'Aves Demo';
 
   @override
   int get logLevel => 1;
 
   @override
-  bool get isProduction {
-    return true;
-  }
+  bool get isProduction => true;
 
   @override
-  bool get isDebugMode {
-    return false;
-  }
+  bool get isDebugMode => false;
 
   @override
   bool get isUsingNetworkMockData => false;
 
   @override
-  bool get isLogging => false;
+  bool get isLogging => true;
 
   @override
   bool get isSystemLogging => false;
 
   @override
-  String get baseUrl => 'https://api.aves.com';
+  String get baseUrl => 'https://my.api';
 
   @override
   String toString() {
-    return 'ProdEnvironment{\n'
+    return 'ProdApiEnvironment{\n'
         '   envName: $envName (isProduction: $isProduction, isDebugMode: $isDebugMode, isUsingNetworkMockData: $isUsingNetworkMockData)\n'
         '   appName: $appName\n'
         '   logLevel: $logLevel\n'

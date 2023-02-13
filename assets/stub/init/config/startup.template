@@ -2,20 +2,24 @@
 /// Author: {{#author}}
 /// Created at: {{#createdAt}}
 
-import 'package:aves/index.dart';
 import 'package:flutter/material.dart';
 import 'package:{{#projectName}}/app/index.dart';
 import 'package:{{#projectName}}/config/di.dart';
+import 'package:{{#projectName}}/config/log.dart';
 
 Future<void> startup(BuildContext context) async {
-  var provider = App.of(context);
-  await provider.asyncInit();
-  configureDependencies();
-  setDefaultDependencies(Di().container);
-  return await _startup(context);
-}
+  appLog.i('run startup.');
 
-Future<void> _startup(BuildContext context) async {
-  // custom...
-  return Future.delayed(const Duration(seconds: 1));
+  // bind Environment to Logger
+  bindSysLogAdapterToLiveData();
+
+  // Dependencies Injection
+  configureDependencies();
+
+  // run init async
+  await App.of(context).asyncInit();
+
+  ///
+  /// Add Custom startup task here...
+  ///
 }

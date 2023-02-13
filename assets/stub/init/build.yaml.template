@@ -6,7 +6,7 @@ targets:
           base_locale: en
           fallback_strategy: base_locale
           input_directory: assets/lang
-          input_file_pattern: .lang.json
+          input_file_pattern: .lang.yaml
           output_directory: lib/config/lang
           # output_file_pattern: .g.dart # deprecated, use output_file_name
           output_file_name: translations.g.dart

@@ -14,23 +14,19 @@ class Environment extends aves.Environment {
   int get logLevel => 1;
 
   @override
-  bool get isProduction {
-    return false;
-  }
+  bool get isProduction => false;
 
   @override
-  bool get isDebugMode {
-    return true;
-  }
+  bool get isDebugMode => false;
 
   @override
   bool get isUsingNetworkMockData => false;
 
+  @override
   bool get isLogging => false;
 
+  @override
   bool get isSystemLogging => false;
-
-  bool get isEnableAds => true;
 
   String get baseUrl => 'https://test.co';
 }

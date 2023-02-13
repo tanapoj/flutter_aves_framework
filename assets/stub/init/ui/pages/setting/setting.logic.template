@@ -1,0 +1,73 @@
+/// Project: {{#projectName}}
+/// Author: {{#author}}
+/// Created at: {{#createdAt}}
+
+import 'package:flutter/material.dart';
+import 'package:aves/index.dart';
+import 'package:{{#projectName}}/app/index.dart';
+import 'setting.view.dart';
+
+class SettingLogic extends ComponentLogic {
+  @override
+  String get name => 'setting';
+
+  /// Class Parameters
+  /// if you want to customize, add here, then add parameter to constructor and build
+  final LifeCycleOwner? parent;
+
+  SettingLogic({
+    Key? key,
+    required Widget Function(ComponentLogic) builder,
+    this.parent,
+  }) : super(key: key, builder: builder);
+
+  factory SettingLogic.build({LifeCycleOwner? parent}) {
+    return SettingLogic(
+      parent: parent,
+      builder: (logic) => SettingView(logic as SettingLogic),
+    );
+  }
+
+  /// Define LiveData
+  late final LiveData<int> $counter = LiveData(0).owner(this);
+  late final LiveData<String?> $nullable = LiveData<String?>(null).owner(this);
+
+  /// LiveCycle Listener
+  /// if no use, you can remove them
+
+  @override
+  onCreate() {
+    super.onCreate();
+    // TODO when page constructed
+  }
+
+  @override
+  onInit() {
+    super.onInit();
+    // TODO when page start running
+  }
+
+  @override
+  onResume() {
+    super.onResume();
+    // TODO when page resume after it paused
+  }
+
+  @override
+  onPause() {
+    // TODO when page leaving from display
+    super.onPause();
+  }
+
+  @override
+  onDispose() {
+    // TODO when page destroy (end of running)
+    super.onDispose();
+  }
+
+  /// Define action
+  /// custom method, called by view
+  increment() {
+    $counter.value++;
+  }
+}

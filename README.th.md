@@ -34,11 +34,34 @@ dev_dependencies:
   build_runner: any
   json_serializable: ^6.5.4
 ```
+package เสริมสำหรับ framework
+```
+dependencies:
+  ...
+  flutter_live_data: ^2.2.5
+  bloc_builder: ^2.2.2
+  mvvm_bloc: ^2.2.0
+
+  dio: ^4.0.6
+  get_it: ^7.2.0
+  injectable: ^1.5.4
+  logger: ^1.1.0
+  shared_preferences: 2.0.15
+  slang: 2.7.0
+  slang_flutter: 2.7.0
+
+dev_dependencies:
+  ...
+  build_runner: any
+  json_serializable: ^6.5.4
+  slang_build_runner: any
+  injectable_generator:
+```
 
 จากนั้นให้รันคำสั่ง `aves init` เพื่อสร้างไฟล์สำคัญสำหรับโปรเจค (ดูหัวข้อ [CLI](#cli))
 
 ### Flutter Version Management
-ถ้าใช้ **fvm** ([https://fvm.app](https://fvm.app)) สามารถตั้งค่า config ให้ Aves รันคำสั่ง `flutter` ด้วย `fvm` ได้โดยใช้คำสั่ง
+ถ้าใช้ **fvm** ([https://fvm.app](https://fvm.app)) สามารถตั้งค่า config ให้ Aves รันคำสั่ง `flutter` ด้วย `fvm` ได้โดยใช้คำสั่ง (ให้รันคำสั่งนี้ก่อนจะสั่ง `aves init`)
 ```
 fvm flutter pub run aves init:config --use-fvm
 ```
@@ -102,28 +125,31 @@ flag
 |   |   |-- app_provider.dart
 |   |   |-- app_translator.dart
 |   |   |-- app_ui.dart
+|   |   |-- global_var.dart
 |   |   '-- environment.dart
 |   |-- common
-|   |   |-- extension
+|   |   |-- extension/
 |   |   '-- helpers.dart
 |   |-- config
-|   |   |-- env
-|   |   |-- lang
+|   |   |-- env/
+|   |   |-- lang/
+|   |   |-- theme/
 |   |   |-- assets.dart
 |   |   |-- di.dart
-|   |   |-- global_var.dart
 |   |   '-- startup.dart
 |   |-- data
-|   |   |-- network
-|   |   |-- db
-|   |   '-- preference
+|   |   |-- db/
+|   |   |-- network/
+|   |   |-- preference/
+|   |   '-- service/
 |   |-- model
-|   |   |-- api
-|   |   |-- local
+|   |   |-- api/
+|   |   |-- local/
+|   |   '-- user.dart
 |   |-- ui
-|   |   |-- main
-|   |   |-- pages
-|   |   '-- widgets
+|   |   |-- main/
+|   |   |-- pages/
+|   |   '-- widgets/
 |   '-- main.dart
 |
 |-- build.yaml
@@ -390,6 +416,10 @@ class MyPageLogic extends ComponentLogic {
     "title": "This is my page"
   }
 }
+```
+```yaml
+my_page:
+  title: "This is my page"
 ```
 
 ```dart

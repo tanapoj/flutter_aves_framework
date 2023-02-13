@@ -2,10 +2,10 @@
 /// Author: {{#author}}
 /// Created at: {{#createdAt}}
 
-export 'app_auth.dart';
-export 'app_component.dart';
-export 'app_navigator.dart';
-export 'app_provider.dart';
-export 'app_translator.dart';
-export 'app_ui.dart';
-export 'environment.dart';
+export 'package:{{#projectName}}/app/app_auth.dart';
+export 'package:{{#projectName}}/app/app_component.dart';
+export 'package:{{#projectName}}/app/app_navigator.dart';
+export 'package:{{#projectName}}/app/app_provider.dart';
+export 'package:{{#projectName}}/app/app_translator.dart';
+export 'package:{{#projectName}}/app/app_ui.dart';
+export 'package:{{#projectName}}/app/environment.dart';

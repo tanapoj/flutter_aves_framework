@@ -3,135 +3,54 @@
 /// Created at: {{#createdAt}}
 
 import 'package:aves/index.dart';
-import 'package:flutter/material.dart' as m;
+import 'package:flutter_live_data/live_source.dart';
 import 'package:{{#projectName}}/app/app_provider.dart';
-import 'package:{{#projectName}}/data/preferences/framework_preference.dart';
+import 'package:{{#projectName}}/config/log.dart';
+import 'package:{{#projectName}}/config/theme/theme1.dart';
+import 'package:{{#projectName}}/config/theme/theme2.dart';
+import 'package:{{#projectName}}/data/preference/app_pref.dart';
 
-class AppUi extends AvesUi {
-  final FrameworkPreference _pref = FrameworkPreference();
-  late final LiveDataSource<AppTheme> $state = LiveDataSource(
-    AppTheme(),
-    verifyDataChange: true,
-  );
+class AppUi extends AvesUi<AppTheme> {
+  final AppPreference _pref = AppPreference();
 
   AppUi(App provider) {
     $state.listen((value) {
-      provider.$state.tick();
+      provider.changeNotify();
     });
+
+    if ($state.value == null) {
+      $state.just.value = AppTheme();
+    }
+  }
+
+  @override
+  syncInit() {
+    ($state as LiveSource<AppTheme?>).adapter = LiveDataSourceAdapter<AppTheme?>(
+      saveData: (appTheme) async {
+        _pref.setAppTheme(appTheme!);
+      },
+    );
   }
 
   @override
   asyncInit() async {
     setTheme(await _pref.getAppTheme());
-    $state.dataSourceInterface = createDataSourceInterface<AppTheme>(
-      loadValueAction: null,
-      onValueUpdatedAction: (AppTheme value, bool hasChange) async {
-        _pref.setAppTheme(value);
-      },
-    );
-  }
-
-  setTheme(AppTheme theme) {
-    $state.value = theme;
   }
 
   useTheme1() {
-    $state.value = AppTheme();
+    setTheme(AppTheme());
   }
 
   useTheme2() {
-    $state.value = AppTheme2();
+    setTheme(AppTheme2());
   }
 
-  AppTheme get theme {
-    return $state.value;
-  }
+  bool get isUsingTheme1 => theme.name == 'theme-1';
 
-  AppStyle get style {
-    return AppStyle();
-  }
-
-  bool get isUsingTheme1 => !isUsingTheme2;
-
-  bool get isUsingTheme2 => $state.value is AppTheme2;
+  bool get isUsingTheme2 => theme.name == 'theme-2';
 
   @override
   String toString() {
     return 'AppUi{${$state}}';
   }
-}
-
-class AppTheme {
-  m.ThemeData get themeData {
-    return m.ThemeData(
-      primarySwatch: const m.MaterialColor(
-        0xFF009DA8,
-        <int, m.Color>{
-          50: m.Color(0xFF009DA8),
-          100: m.Color(0xFF009DA8),
-          200: m.Color(0xFF009DA8),
-          300: m.Color(0xFF009DA8),
-          400: m.Color(0xFF009DA8),
-          500: m.Color(0xFF009DA8),
-          600: m.Color(0xFF009DA8),
-          700: m.Color(0xFF009DA8),
-          800: m.Color(0xFF009DA8),
-          900: m.Color(0xFF009DA8),
-        },
-      ),
-    );
-  }
-
-  @override
-  String toString() {
-    return 'AppTheme{light theme}';
-  }
-}
-
-class AppTheme2 extends AppTheme {
-  @override
-  m.ThemeData get themeData {
-    return m.ThemeData(
-      primarySwatch: m.Colors.purple,
-    );
-  }
-
-  @override
-  String toString() {
-    return 'AppTheme{dark theme}';
-  }
-}
-
-class AppStyle {
-  final _Text text = _Text();
-  final _Color color = _Color();
-  final _Dimen dimen = _Dimen();
-}
-
-// Text
-
-class _Text {
-  final _TextSize size = _TextSize();
-  final m.TextStyle textStyle1 = const m.TextStyle(
-    color: m.Colors.green,
-  );
-  final m.TextStyle textStyle2 = const m.TextStyle(
-    color: m.Colors.cyan,
-  );
-}
-
-class _TextSize {
-  final int header1 = 24;
-}
-
-// Color
-
-class _Color {
-  final m.Color primary = m.Colors.green;
-}
-
-// dimension
-
-class _Dimen {
-  final double s = 0;
 }

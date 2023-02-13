@@ -2,3 +2,45 @@
 /// Author: {{#author}}
 /// Created at: {{#createdAt}}
 
+import 'dart:convert';
+
+class User {
+  final int id;
+  final String name;
+  String? _token;
+
+  String get token => _token ?? '';
+
+  User(this.id, this.name);
+
+  setToken(String token) {
+    _token = _token;
+  }
+
+  String serialize() {
+    return jsonEncode({
+      'id': id,
+      'name': name,
+      'token': _token,
+    });
+  }
+
+  static User? unserialize(String serializedString) {
+    try {
+      var data = jsonDecode(serializedString);
+      int id = data['id'];
+      String name = data['name'];
+      String? token = data['token'];
+      var user = User(id, name);
+      if (token != null) user.setToken(token);
+      return user;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  @override
+  String toString() {
+    return 'User{id: $id, name: $name, _token: $_token}';
+  }
+}
