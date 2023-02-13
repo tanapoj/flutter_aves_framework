@@ -1,6 +1,6 @@
 name: aves
 description: Aves Framework
-version: 0.0.33+5
+version: 0.1.0-beta
 homepage: https://github.com/tanapoj/aves
 
 environment:

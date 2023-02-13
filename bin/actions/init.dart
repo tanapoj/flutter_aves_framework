@@ -471,7 +471,7 @@ class InitAction extends Action {
         printer.writeln('$prefix ${await _createFile(
           outputDir: 'assets/mock',
           outputFile: '$model.json',
-          template: 'init/assets/lang/$model.json',
+          template: 'init/assets/mock/$model.json',
           vars: {
             '': '',
           },
