@@ -18,7 +18,7 @@ Aves เป็นเฟรมเวิร์คสำหรับสร้าง
 - Page-based State Management
 - Networking
 - Localization (ระบบหลายภาษา)
-- Environment
+- Environment (ระบบแยกค่าตาม env)
 - Logging
 - UI and Theming
 
@@ -28,7 +28,7 @@ Aves เป็นเฟรมเวิร์คสำหรับสร้าง
 
 เพิ่ม package ในโปรเจค
 
-```
+```yaml
 dependencies:
   aves: {{version}}
 
@@ -36,8 +36,8 @@ dev_dependencies:
   build_runner: any
   json_serializable: ^6.5.4
 ```
-package เสริมสำหรับ framework
-```
+package เสริมสำหรับ framework หากต้องการใช้สามารถติดตั้งเพิ่มได้
+```yaml
 dependencies:
   ...
   flutter_live_data: ^2.2.5
@@ -67,13 +67,16 @@ dev_dependencies:
 ```
 fvm flutter pub run aves init:config --use-fvm
 ```
+ระบบจะสร้าง aves config file (`{{project-root}}/.aves/aves_config.yaml`) ทำให้การรันคำสั่ง CLI ทั้งหมดจะรันผ่าน FVM
 
 ## CLI
+
+> หากใช้ FVM ให้เติม `fvm` นำหน้าคำสั่งทั้งหมดต่อไปนี้
 
 คำสั่งเพื่อแสดง cli ทั้งหมด (help)
 
 ```
-fvm flutter pub run aves
+flutter pub run aves
 ```
 
 ### Init Project
@@ -81,7 +84,7 @@ fvm flutter pub run aves
 ใช้คำสั่ง `init` เพื่อสร้างไฟล์ project
 
 ```
-fvm flutter pub run aves init
+flutter pub run aves init
 ```
 flag
 - `--dir`: กำหนดว่าจะสร้างโปรเจคที่ directory ไหน (default: `lib`)
@@ -91,9 +94,9 @@ flag
 คำสั่งเพื่อรัน build_runner (ไฟล์ที่ต้องใช้การ generate)
 
 ```
-fvm flutter pub run aves generate
-fvm flutter pub run aves generate:model
-fvm flutter pub run aves generate:injectable
+flutter pub run aves generate
+flutter pub run aves generate:model
+flutter pub run aves generate:injectable
 ```
 flag
 - `--overwrite`: ถ้าต้องการให้เขียนไฟล์ทับไฟล์เดิม
@@ -101,10 +104,10 @@ flag
 การสร้างไฟล์
 
 ```
-fvm flutter pub run aves make:page  ชื่อเพจ
-fvm flutter pub run aves make:logic ชื่อโลจิค
-fvm flutter pub run aves make:view  ชื่อวิว
-fvm flutter pub run aves make:model ชื่อโมเดล
+flutter pub run aves make:page  ชื่อเพจ
+flutter pub run aves make:logic ชื่อโลจิค
+flutter pub run aves make:view  ชื่อวิว
+flutter pub run aves make:model ชื่อโมเดล
 ```
 flag
 - `--dir`: กำหนดว่าจะสร้างโปรเจคที่ directory ไหน (default: `lib/ui/pages` ยกเว้น model จะอยู่ที่ `lib/model`)
@@ -166,6 +169,7 @@ flag
     - **network**: endpoint สำหรับเรียกข้อมูลจาก API
     - **db**: Local Database
     - **preference**: Shared Preference
+    - **service**: คลาสสำหรับเก็บ business logic หลัก
 - **model**: โมเดลสำหรับเก็บข้อมูล
 - **ui**:
     - **main**:
@@ -181,6 +185,10 @@ flag
 |          |
 +----------+
 ```
+
+โครงสร้างของ page จะประกอบด้วยไฟล์ Logic ที่จะเป็นโลจิคหลักของหน้า และ View ที่จะเป็นส่วนแสดงผลของหน้า
+
+ทั้งสองคลาสจะทำงานเชื่อมกัน และรับส่งข้อมูลผ่านกันตามแพทเทิร์น BLoC โดยใช้ไลบรารี่ flutter_live_data และ bloc_builder
 
 ## Dependency Injection
 
@@ -210,40 +218,6 @@ class MyPageLogic extends ComponentLogic {
   /// LiveData
 
   late final LiveData<int> $counter = LiveData(0).owner(this);
-
-  /// LiveCycle Listener
-
-  @override
-  onCreate() {
-    super.onCreate();
-    // TODO เมื่อหน้าเพจถูกสร้าง (constructor)
-  }
-
-  @override
-  onInit() {
-    super.onInit();
-    // TODO เมื่อหน้าเพจเริ่มทำงานครั้งแรก
-  }
-
-  @override
-  onResume() {
-    super.onResume();
-    // TODO เมื่อหน้าเพจโดนเรียกหลังจาก pause ไป
-  }
-
-  @override
-  onPause() {
-    // TODO เมื่อหน้าเพจโดยซ่อนหรือย่อหน้าแอพลงไป
-    super.onPause();
-  }
-
-  @override
-  onDispose() {
-    // TODO เมื่อหน้าเพจโดนทำลาย
-    super.onDispose();
-  }
-
-  /// Method
 
   increment() {
     $counter.value++;
@@ -350,6 +324,7 @@ class A extends ComponentLogic {
 
 class B extends ComponentLogic {
     ...
+    // มีการ push ไปยังหน้า C อีกที
 }
 
 class C extends ComponentLogic {
@@ -693,7 +668,7 @@ class MyApi {
     return Request<T>.http()
       ..method = 'GET'
       ..baseUrl = 'https://my.api/'
-      ..requestInterceptor = useAuthorizationBearerToken()
+      ..requestInterceptor = useAuthorizationBearerToken() + useMockData(fileName: 'example.json')
       ..responseInterceptor = useRetry(limit: 3);
   }
 
@@ -721,6 +696,34 @@ class MyApi {
 
 ## Localization
 
+สำหรับระบบหลายภาษา สามารถกำหนดไฟล์ภาษาได้ที่ `assets/lang` ใช้ได้ทั้งรูปแบบ yaml และ json
+
+ตัวอย่างเช่น
+```json
+{
+  "my_page": {
+    "title": "This is my page"
+  }
+}
+```
+หรือ
+```yaml
+my_page:
+  title: "This is my page"
+```
+
+ตัวแปรภาษาทั้งหมดจะเป็นการ generate ขึ้นมา ดังนั้นถ้ามีการแก้ไขไฟล์ภาษาจะต้องสั่งรัน `aves generate` ใหม่ทุกครั้ง
+
+และสามารถเรียกใช้ตัวแปรภาษาได้จาก global variable ชื่อ `tt` (Text Translate) ตามด้วยชื่อที่กำหนดในไฟล์ yaml หรือ json
+
+```dart
+build(BuildContext context) {
+  return Text(tt.my_page.title);
+}
+```
+
+ส่วนการสั่งเปลี่ยนภาษาจะสั่งผ่าน build-in helper ชื่อ `translator` ซึ่งสามารถกำหนดได้ใน app_translator
+
 ```dart
 class MyPageLogic extends ComponentLogic {
 
@@ -737,23 +740,8 @@ class MyPageLogic extends ComponentLogic {
 }
 ```
 
-```json
-{
-  "my_page": {
-    "title": "This is my page"
-  }
-}
-```
-```yaml
-my_page:
-  title: "This is my page"
-```
 
-```dart
-build(BuildContext context) {
-  return Text(tt.my_page.title);
-}
-```
+
 
 ## UI and Theming
 
