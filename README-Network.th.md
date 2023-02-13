@@ -1,4 +1,4 @@
-# Networking & API
+## Networking & API
 
 การเชื่อมต่อ API สำหรับเฟรมเวิร์ค Aves จะใช้คลาส `Request` และ `Response` ซึ่งเป็น Wrapper Class ครอบ `dio` อีกทีหนึ่ง
 
@@ -29,7 +29,7 @@ Response<String> res = await req.fetch(
 ```
 
 
-## Request Option
+### Request Option
 ```dart
 Request<String> req = Request<String>.http()
     ..method = 'GET'
@@ -90,7 +90,7 @@ interceptor ที่จะทำงานหลังจากได้รั�
 
 
 
-## Response Option
+### Response Option
 ```dart
 >>  message: ok  
 >>  statusCode: 200  
@@ -126,7 +126,7 @@ extra field สำหรับการแนบข้อมูลพิเศ�
 
 
 
-## Interceptor
+### Interceptor
 
 ทำหน้าที่เป็นตัวขั้นกลางระหว่างก่อน request และหลังจากได้รับ response มา
 
@@ -155,7 +155,7 @@ extra field สำหรับการแนบข้อมูลพิเศ�
 ```
 
 
-### Custom Interceptor
+#### Custom Interceptor
 เราสามารถสร้าง interceptor เองได้ ตัวอย่างเช่น
 
 #### Use Case 1
@@ -306,7 +306,7 @@ code: `useUnboxedJSend()` แกะโครงสร้างข้อมูล
 code: `useContentRangePagination()` ดึงข้อมูล Content-Range ที่เป็น Pagination ออกมาแล้วใส่ลงใน extra เตรียมไว้ให้
 
 
-## User Defined Network Class
+### User Defined Network Class
 
 ```dart
 @injectable
