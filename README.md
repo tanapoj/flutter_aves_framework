@@ -31,6 +31,8 @@ Aves เป็นเฟรมเวิร์คสำหรับสร้าง
 ```yaml
 dependencies:
   aves: {{version}}
+  slang: 2.7.0
+  slang_flutter: 2.7.0
 
 dev_dependencies:
   build_runner: any
